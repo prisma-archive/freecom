@@ -14,7 +14,13 @@
 }
 
 .CreateConversationButton {
+  width: 100%;
+  text-align: center;
   margin: 25px 0 25px 0;
-  font-size: 30px;
+  padding: 12px 12px 12px 12px;
+  font-size: 20px;
   cursor: pointer;
+  background-color: rgba(39,174,96,1);
+  color: white;
+  border-radius: 2px;
 }
