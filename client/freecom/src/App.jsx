@@ -139,9 +139,6 @@ class App extends Component {
 
     return (
       <div className='App'>
-        <div className='App-header'>
-          <h2>Welcome to Freecom - Type a message</h2>
-        </div>
         {!conversationExists ?
           Boolean(this.state.conversations) &&
           <div>

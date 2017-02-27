@@ -37,6 +37,10 @@ const allMessages = gql`
         {
             text
             createdAt
+            agent {
+                id
+                slackUserName
+            }
         }
     }
 `
