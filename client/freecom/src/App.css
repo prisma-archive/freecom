@@ -12,3 +12,9 @@
   padding: 20px;
   color: white;
 }
+
+.CreateConversationButton {
+  margin: 25px 0 25px 0;
+  font-size: 30px;
+  cursor: pointer;
+}

@@ -6,10 +6,19 @@ import { graphql, compose, withApollo } from 'react-apollo'
 import gql from 'graphql-tag'
 import generateStupidName from 'sillyname'
 
+
+const createCustomer = gql`
+    mutation createCustomer($name: String!, $slackChannelName: String!) {
+        createCustomer(name: $name) {
+            id
+        }
+    }
+`
+
 const createCustomerAndConversation = gql`
     mutation createCustomer($name: String!, $slackChannelName: String!) {
         createCustomer(name: $name, conversations: [{
-            slackChannelName: $slackChannelName,
+        slackChannelName: $slackChannelName,
         }]) {
             id
             conversations {
@@ -24,9 +33,9 @@ const createCustomerAndConversation = gql`
 const findConversations = gql`
     query allConversations($customerId: ID!) {
         allConversations(filter: {
-          customer: {
-            id: $customerId
-          } 
+        customer: {
+        id: $customerId
+        }
         }){
             id
             updatedAt
@@ -78,44 +87,43 @@ class App extends Component {
       console.log('Find conversations result: ', findConversationsResult)
       this.setState({conversations: findConversationsResult.data.allConversations})
 
-      // find channel with greatest position appended as suffix
-      const channelPositions = findConversationsResult.data.allConversations.map(conversation => {
-        const slackChannelNameComponents = conversation.slackChannelName.split('-')
-        return slackChannelNameComponents[slackChannelNameComponents.length-1]
-      })
-
-      console.log('Channel positions: ', channelPositions)
-
-      const maxPosition = Math.max.apply(null, channelPositions)
-      const newChannelPosition = maxPosition + 1
-      const newChannelName = username + '-' + newChannelPosition
-
-      // create new conversation for the customer
-      console.log('Create conversation for existing customer: ', customerId, newChannelName)
-      const result = await this.props.createConversationMutation({
-        variables: {
-          customerId: customerId,
-          slackChannelName: newChannelName
-        }
-      })
-      const conversationId = result.data.createConversation.id
-      // this.setState({conversationId})
+      // // find channel with greatest position appended as suffix
+      // const channelPositions = findConversationsResult.data.allConversations.map(conversation => {
+      //   const slackChannelNameComponents = conversation.slackChannelName.split('-')
+      //   return slackChannelNameComponents[slackChannelNameComponents.length-1]
+      // })
+      //
+      // console.log('Channel positions: ', channelPositions)
+      //
+      // const maxPosition = Math.max.apply(null, channelPositions)
+      // const newChannelPosition = maxPosition + 1
+      // const newChannelName = username + '-' + newChannelPosition
+      //
+      // // create new conversation for the customer
+      // console.log('Create conversation for existing customer: ', customerId, newChannelName)
+      // const result = await this.props.createConversationMutation({
+      //   variables: {
+      //     customerId: customerId,
+      //     slackChannelName: newChannelName
+      //   }
+      // })
+      // const conversationId = result.data.createConversation.id
+      // // this.setState({conversationId})
     }
     else {
       // customer doesn't exist yet, create customer and conversation
       const username = this._generateShortStupidName()
       const slackChannelName = username + '-' + '0'
-      const result = await this.props.createCustomerAndConversationMutation({
+      const result = await this.props.createCustomerMutation({
         variables: {
           name: username,
-          slackChannelName
         }
       })
       console.log('Did create new customer: ', result.data)
       const customerId = result.data.createCustomer.id
       localStorage.setItem(FREECOM_CUSTOMER_ID_KEY, customerId)
       localStorage.setItem(FREECOM_CUSTOMER_NAME_KEY, username)
-      const conversationId = result.data.createCustomer.conversations[0].id
+      // const conversationId = result.data.createCustomer.conversations[0].id
       // this.setState({conversationId})
     }
 
@@ -136,10 +144,16 @@ class App extends Component {
         </div>
         {!conversationExists ?
           Boolean(this.state.conversations) &&
-          <ConversationsList
-            conversations={this.state.conversations}
-            onSelectConversation={this._onSelectConversation}
-          />
+          <div>
+            <div
+              className='CreateConversationButton'
+              onClick={() => this._createNewConversation()}
+            >Create new conversation</div>
+            <ConversationsList
+              conversations={this.state.conversations}
+              onSelectConversation={this._onSelectConversation}
+            />
+          </div>
           :
           customerExists &&
           <Chat
@@ -151,6 +165,36 @@ class App extends Component {
 
       </div>
     )
+  }
+
+  _createNewConversation = async () => {
+
+    const customerId = localStorage.getItem(FREECOM_CUSTOMER_ID_KEY)
+    const username = localStorage.getItem(FREECOM_CUSTOMER_NAME_KEY)
+
+    console.log('Create new conversation')
+    // find channel with greatest position appended as suffix
+    const channelPositions = this.state.conversations.map(conversation => {
+      const slackChannelNameComponents = conversation.slackChannelName.split('-')
+      return slackChannelNameComponents[slackChannelNameComponents.length-1]
+    })
+
+    console.log('Channel positions: ', channelPositions)
+
+    const maxPosition = Math.max.apply(null, channelPositions)
+    const newChannelPosition = maxPosition + 1
+    const newChannelName = username + '-' + newChannelPosition
+
+    // create new conversation for the customer
+    console.log('Create conversation for existing customer: ', customerId, newChannelName)
+    const result = await this.props.createConversationMutation({
+      variables: {
+        customerId: customerId,
+        slackChannelName: newChannelName
+      }
+    })
+    const conversationId = result.data.createConversation.id
+    this.setState({conversationId})
   }
 
   _onSelectConversation = (conversation) => {
@@ -179,6 +223,7 @@ class App extends Component {
 
 const appWithMutations = compose(
   graphql(createConversation, {name : 'createConversationMutation'}),
+  graphql(createCustomer, {name: 'createCustomerMutation'}),
   graphql(createCustomerAndConversation, {name: 'createCustomerAndConversationMutation'})
 )(App)
 
