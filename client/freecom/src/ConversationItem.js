@@ -1,12 +1,15 @@
 import React, { Component} from 'react'
 import './ConversationItem.css'
-import ChatMessage from './ChatMessage'
 
 class ConversationItem extends Component {
 
   render() {
     return (
-      <div className='ConversationItem'>
+      <div
+        className='ConversationItem'
+        onClick={() => this.props.onSelectConversation(this.props.conversation)}
+      >
+        {this.props.conversation.updatedAt}
       </div>
     )
   }

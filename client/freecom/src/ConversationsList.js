@@ -1,17 +1,20 @@
 import React, { Component} from 'react'
 import './ConversationsList.css'
-import ChatMessage from './ChatMessage'
+import ConversationItem from './ConversationItem'
 
 class ConversationsList extends Component {
 
   render() {
+
+    console.log('ConversationsList - render - conversations: ', this.props.conversations)
+
     return (
-      <div className='ConversationsList'>
-        {this.props.messages.map((message, i) => {
-          return (<ChatMessage
+      <div className=''>
+        {this.props.conversations.map((conversation, i) => {
+          return (<ConversationItem
             key={i}
-            time={message.createdAt}
-            message={message.text}
+            conversation={conversation}
+            onSelectConversation={this.props.onSelectConversation}
           />)
         })}
       </div>

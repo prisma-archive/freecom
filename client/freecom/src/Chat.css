@@ -2,3 +2,7 @@
     width: 700px;
     height: 100%;
 }
+
+.BackButton {
+    cursor: pointer;
+}

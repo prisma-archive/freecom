@@ -91,6 +91,10 @@ class Chat extends Component {
           onResetText={() => this.setState({message: ''})}
           onSend={this._onSend}
         />
+        <div
+          className='BackButton'
+          onClick={() => this.props.resetConversation()}
+        >Back</div>
       </div>
     )
   }
