@@ -47,6 +47,7 @@ class App extends Component {
 
   state = {
     conversationId: null,
+    displayState: 'CONVERSATIONS' // 'CONVERSATIONS' or 'CHAT'
   }
 
   async componentDidMount() {
@@ -61,7 +62,7 @@ class App extends Component {
     console.log('Got customer Id from local storage: ', customerId)
     if (Boolean(customerId) && Boolean(username)) {
 
-      // find all conversations for that customer
+      // customer already exists, find all conversations for that customer
       const findConversationsResult = await this.props.client.query({
         query: findConversations,
         variables: {
@@ -84,7 +85,7 @@ class App extends Component {
       const newChannelPosition = maxPosition + 1
       const newChannelName = username + '-' + newChannelPosition
 
-      // customer already exists, create new conversation for them
+      // create new conversation for the customer
       console.log('Create conversation for existing customer: ', customerId, newChannelName)
       const result = await this.props.createConversationMutation({
         variables: {
@@ -141,15 +142,12 @@ class App extends Component {
     const maxLength = 17
     const username = generateStupidName()
     if (username.length > maxLength) {
-      console.log('username too long: ', username)
       return this._generateShortStupidName()
     }
     const usernameWithoutSpace = username.replace(' ', '-')
-    console.log('found username: ', usernameWithoutSpace)
     return usernameWithoutSpace
   }
 }
-
 
 const appWithMutations = compose(
   graphql(createConversation, {name : 'createConversationMutation'}),
