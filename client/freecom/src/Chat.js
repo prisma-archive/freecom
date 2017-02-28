@@ -61,7 +61,7 @@ class Chat extends Component {
       document: gql`
           subscription {
               createMessage(filter: {
-              conversation: {
+                conversation: {
               id: "${this.props.conversationId}"
               }
               }) {

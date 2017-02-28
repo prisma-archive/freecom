@@ -8,7 +8,7 @@ import generateStupidName from 'sillyname'
 
 
 const createCustomer = gql`
-    mutation createCustomer($name: String!, $slackChannelName: String!) {
+    mutation createCustomer($name: String!) {
         createCustomer(name: $name) {
             id
         }

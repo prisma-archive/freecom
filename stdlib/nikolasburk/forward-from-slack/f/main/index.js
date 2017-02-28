@@ -65,10 +65,7 @@ module.exports = (params, callback) => {
     return callback(error, 'Could not query conversations!')
 
   })
-
-
-
-
+  
 }
 
 
