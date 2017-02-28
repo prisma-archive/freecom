@@ -12,10 +12,16 @@ class ConversationItem extends Component {
 
     return (
       <div
-        className='ConversationItem'
+        className='conversation interior-padding fadeInLeft'
         onClick={() => this.props.onSelectConversation(this.props.conversation)}
       >
-        Last message in conversation: {ago}
+        <div className="flex">
+          <div className="avatar"></div>
+          <div className="full-width">
+            <p className='right opaque'>{ago}</p>
+
+          </div>
+        </div>
       </div>
     )
   }

@@ -1,4 +1,5 @@
 import React, { Component } from 'react'
+import cx from 'classnames'
 import './App.css'
 import Chat from './Chat'
 import ConversationsList from './ConversationsList'
@@ -61,7 +62,8 @@ class App extends Component {
   state = {
     conversationId: null,
     conversations: [],
-    displayState: 'CONVERSATIONS' // 'CONVERSATIONS' or 'CHAT'
+    displayState: 'CONVERSATIONS', // 'CONVERSATIONS' or 'CHAT'
+    isOpen: false,
   }
 
   async componentDidMount() {
@@ -134,6 +136,10 @@ class App extends Component {
     const customerId = localStorage.getItem(FREECOM_CUSTOMER_ID_KEY)
     const customerExists = Boolean(customerId)
     const conversationExists = Boolean(this.state.conversationId)
+    const panelStyles = cx('panel drop-shadow radius', {
+      'hide': !this.state.isOpen,
+      'fadeInUp':this.state.isOpen,
+    })
 
     console.log('App - render - ', customerId, this.state.conversationId)
 
@@ -150,6 +156,28 @@ class App extends Component {
               conversations={this.state.conversations}
               onSelectConversation={this._onSelectConversation}
             />
+
+            <div className="container">
+              <div className={panelStyles}>
+                <div className="header interior-padding">
+                  <div className="avatar-spacer gutter-left">
+                    Header
+                    <p className='opaque'>subtitle goes here</p>
+                  </div>
+                  <div className="mobile-button drop-shadow" onClick={() => this._togglePanel()}>×</div>
+                </div>
+                <div className="body">
+                  <ConversationsList
+                    conversations={this.state.conversations}
+                    onSelectConversation={this._onSelectConversation}
+                  />
+                  <div className="conversation-button">New Conversation</div>
+                </div>
+                <button onClick={() => this._createNewConversation()}>new conversation</button>
+              </div>
+
+              <div className="button drop-shadow" onClick={() => this._togglePanel()}></div>
+            </div>
           </div>
           :
           customerExists &&
@@ -163,6 +191,8 @@ class App extends Component {
       </div>
     )
   }
+
+  _togglePanel = () => this.setState({isOpen: !this.state.isOpen})
 
   _createNewConversation = async () => {
 
