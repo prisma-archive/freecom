@@ -8,9 +8,10 @@ import generateStupidName from 'sillyname'
 
 
 const createCustomer = gql`
-    mutation createCustomer($name: String!, $slackChannelName: String!) {
+    mutation createCustomer($name: String!) {
         createCustomer(name: $name) {
             id
+            name
         }
     }
 `
@@ -139,9 +140,6 @@ class App extends Component {
 
     return (
       <div className='App'>
-        <div className='App-header'>
-          <h2>Welcome to Freecom - Type a message</h2>
-        </div>
         {!conversationExists ?
           Boolean(this.state.conversations) &&
           <div>
@@ -181,8 +179,11 @@ class App extends Component {
 
     console.log('Channel positions: ', channelPositions)
 
-    const maxPosition = Math.max.apply(null, channelPositions)
-    const newChannelPosition = maxPosition + 1
+    let newChannelPosition = 1
+    if (channelPositions.length > 0) {
+      const maxPosition = Math.max.apply(null, channelPositions)
+      newChannelPosition = maxPosition + 1
+    }
     const newChannelName = username + '-' + newChannelPosition
 
     // create new conversation for the customer

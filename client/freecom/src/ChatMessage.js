@@ -10,14 +10,15 @@ class ChatMessage extends Component {
     const nowTimestamp = new Date().getTime()
     const ago = timeDifference(nowTimestamp, createdAtTimestamp)
 
-    const leftAlign = this.props.message.startsWith('You')
+    const leftAlign = !Boolean(this.props.sentByAgent)
+    const messagePrefix = Boolean(this.props.sentByAgent) ? this.props.sentByAgent.slackUserName + ': ' : 'You: '
 
     return (
       <div className={leftAlign ? 'ChatMessageLeftAlign' : 'ChatMessageRightAlign'}>
         <div className='MessageHeader'>
           <div className='Time'>({ago})</div>
         </div>
-        <div className='Message'>{this.props.message}</div>
+        <div className='Message'>{messagePrefix + this.props.message}</div>
       </div>
     )
   }
