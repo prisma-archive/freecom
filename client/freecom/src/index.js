@@ -27,10 +27,28 @@ const client = new ApolloClient({
 })
 
 
-ReactDOM.render(
-  <ApolloProvider client={client}>
-    <App />
-  </ApolloProvider>
-  ,
-  document.getElementById('root')
-)
+function render(element) {
+
+  if (!element) {
+    const root = document.createElement('div')
+    root.id = '__freecom-root__'
+    document.body.appendChild(root)
+    element = root
+  }
+
+  ReactDOM.render(
+    <ApolloProvider client={client}>
+      <App />
+    </ApolloProvider>
+    ,
+    element
+  )
+}
+
+const freecom = {
+  render,
+}
+
+global['Freecom'] = freecom
+
+render(document.getElementById('__freecom-root__'))

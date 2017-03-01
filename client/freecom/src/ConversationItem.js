@@ -6,9 +6,21 @@ class ConversationItem extends Component {
 
   render() {
 
-    const createdAtTimestamp = new Date(this.props.conversation.updatedAt).getTime()
-    const nowTimestamp = new Date().getTime()
-    const ago = timeDifference(nowTimestamp, createdAtTimestamp)
+    const lastMessage = this.props.conversation.messages[0]
+    let ago
+    let message
+    if(lastMessage) {
+      const createdAtTimestamp = new Date(lastMessage.createdAt).getTime()
+      const nowTimestamp = new Date().getTime()
+      ago = timeDifference(nowTimestamp, createdAtTimestamp)
+      message = lastMessage.text
+    }
+    else {
+      const createdAtTimestamp = new Date(this.props.conversation.updatedAt).getTime()
+      const nowTimestamp = new Date().getTime()
+      ago = ''
+      message = 'Start a new conversation'
+    }
 
     return (
       <div
@@ -17,9 +29,9 @@ class ConversationItem extends Component {
       >
         <div className="flex">
           <div className="avatar"></div>
+          <div>{message}</div>
           <div className="full-width">
             <p className='right opaque'>{ago}</p>
-
           </div>
         </div>
       </div>

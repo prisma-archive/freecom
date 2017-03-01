@@ -103,6 +103,11 @@ class Chat extends Component {
   }
 
   render() {
+
+    if (this.props.allMessagesQuery.loading) {
+      return <div>Loading messages ...</div>
+    }
+
     return (
       <div className='Chat'>
         <ChatMessages

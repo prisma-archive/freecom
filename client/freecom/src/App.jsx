@@ -7,7 +7,6 @@ import { graphql, compose, withApollo } from 'react-apollo'
 import gql from 'graphql-tag'
 import generateStupidName from 'sillyname'
 
-
 const createCustomer = gql`
     mutation createCustomer($name: String!) {
         createCustomer(name: $name) {
@@ -35,13 +34,22 @@ const createCustomerAndConversation = gql`
 const findConversations = gql`
     query allConversations($customerId: ID!) {
         allConversations(filter: {
-        customer: {
-        id: $customerId
-        }
+          customer: {
+            id: $customerId
+          }
         }){
             id
             updatedAt
             slackChannelName
+            messages(last: 1) {
+                id
+                text
+                createdAt
+                agent {
+                    id
+                    slackUserName
+                }
+            }
         }
     }
 `
@@ -90,33 +98,10 @@ class App extends Component {
       console.log('Find conversations result: ', findConversationsResult)
       this.setState({conversations: findConversationsResult.data.allConversations})
 
-      // // find channel with greatest position appended as suffix
-      // const channelPositions = findConversationsResult.data.allConversations.map(conversation => {
-      //   const slackChannelNameComponents = conversation.slackChannelName.split('-')
-      //   return slackChannelNameComponents[slackChannelNameComponents.length-1]
-      // })
-      //
-      // console.log('Channel positions: ', channelPositions)
-      //
-      // const maxPosition = Math.max.apply(null, channelPositions)
-      // const newChannelPosition = maxPosition + 1
-      // const newChannelName = username + '-' + newChannelPosition
-      //
-      // // create new conversation for the customer
-      // console.log('Create conversation for existing customer: ', customerId, newChannelName)
-      // const result = await this.props.createConversationMutation({
-      //   variables: {
-      //     customerId: customerId,
-      //     slackChannelName: newChannelName
-      //   }
-      // })
-      // const conversationId = result.data.createConversation.id
-      // // this.setState({conversationId})
     }
     else {
       // customer doesn't exist yet, create customer and conversation
       const username = this._generateShortStupidName()
-      const slackChannelName = username + '-' + '0'
       const result = await this.props.createCustomerMutation({
         variables: {
           name: username,
@@ -126,8 +111,6 @@ class App extends Component {
       const customerId = result.data.createCustomer.id
       localStorage.setItem(FREECOM_CUSTOMER_ID_KEY, customerId)
       localStorage.setItem(FREECOM_CUSTOMER_NAME_KEY, username)
-      // const conversationId = result.data.createCustomer.conversations[0].id
-      // this.setState({conversationId})
     }
 
   }
@@ -149,15 +132,6 @@ class App extends Component {
         {!conversationExists ?
           Boolean(this.state.conversations) &&
           <div>
-            <div
-              className='CreateConversationButton'
-              onClick={() => this._createNewConversation()}
-            >Create new conversation</div>
-            <ConversationsList
-              conversations={this.state.conversations}
-              onSelectConversation={this._onSelectConversation}
-            />
-
             <div className="container">
               <div className={panelStyles}>
                 <div className="header interior-padding">
@@ -172,21 +146,37 @@ class App extends Component {
                     conversations={this.state.conversations}
                     onSelectConversation={this._onSelectConversation}
                   />
-                  <div className="conversation-button">New Conversation</div>
+                  <div
+                    className="conversation-button"
+                    onClick={() => this._createNewConversation()}
+                  >New Conversation</div>
                 </div>
-                <button onClick={() => this._createNewConversation()}>new conversation</button>
               </div>
-
               <div className="button drop-shadow" onClick={() => this._togglePanel()}></div>
             </div>
           </div>
           :
           customerExists &&
-          <Chat
-            conversationId={this.state.conversationId}
-            customerId={customerId}
-            resetConversation={this._resetConversation}
-          />
+          <div>
+
+            <div className="container">
+              <div className={panelStyles}>
+                <div className="header interior-padding">
+                  <div className="avatar-spacer gutter-left">
+                    Header
+                    <p className='opaque'>subtitle goes here</p>
+                  </div>
+                  <div className="mobile-button drop-shadow" onClick={() => this._togglePanel()}>×</div>
+                </div>
+                <Chat
+                  conversationId={this.state.conversationId}
+                  customerId={customerId}
+                  resetConversation={this._resetConversation}
+                />
+              </div>
+              <div className="button drop-shadow" onClick={() => this._togglePanel()}></div>
+            </div>
+          </div>
         }
 
       </div>
