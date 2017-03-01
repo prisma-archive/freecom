@@ -15,7 +15,7 @@ class ChatMessage extends Component {
 
     return (
       <div className={leftAlign ? 'ChatMessageLeftAlign' : 'ChatMessageRightAlign'}>
-        <div className='MessageHeader'>
+        <div className='MessageHeader background-gray'>
           <div className='Time'>({ago})</div>
         </div>
         <div className='Message'>{messagePrefix + this.props.message}</div>

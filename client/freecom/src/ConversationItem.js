@@ -22,12 +22,12 @@ class ConversationItem extends Component {
 
     return (
       <div
-        className='conversation interior-padding fadeInLeft'
+        className='conversation interior-padding fadeInLeft pointer hover-gray'
         onClick={() => this.props.onSelectConversation(this.props.conversation)}
       >
         <div className="flex">
           <div className="avatar"></div>
-          <div>{message}</div>
+          <p>{message}</p>
           <div className="full-width">
             <p className='right opaque'>{ago}</p>
           </div>
