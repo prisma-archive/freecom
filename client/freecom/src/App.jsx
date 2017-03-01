@@ -12,6 +12,7 @@ const createCustomer = gql`
     mutation createCustomer($name: String!) {
         createCustomer(name: $name) {
             id
+            name
         }
     }
 `
@@ -208,8 +209,11 @@ class App extends Component {
 
     console.log('Channel positions: ', channelPositions)
 
-    const maxPosition = Math.max.apply(null, channelPositions)
-    const newChannelPosition = maxPosition + 1
+    let newChannelPosition = 1
+    if (channelPositions.length > 0) {
+      const maxPosition = Math.max.apply(null, channelPositions)
+      newChannelPosition = maxPosition + 1
+    }
     const newChannelName = username + '-' + newChannelPosition
 
     // create new conversation for the customer

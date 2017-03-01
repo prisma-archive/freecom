@@ -23,6 +23,11 @@ const createMessage = gql`
         createMessage(text: $text, conversationId: $conversationId) {
             id
             text
+            createdAt
+            agent {
+                id
+                slackUserName
+            }
         }
     }
 `
@@ -30,11 +35,12 @@ const createMessage = gql`
 const allMessages = gql`
     query allMessages($conversationId: ID!) {
         allMessages(filter: {
-        conversation: {
-        id: $conversationId
-        }
+          conversation: {
+            id: $conversationId
+          }
         })
         {
+            id
             text
             createdAt
             agent {
@@ -60,26 +66,39 @@ class Chat extends Component {
     this.newMessageSubscription = this.props.allMessagesQuery.subscribeToMore({
       document: gql`
           subscription {
-              createMessage(filter: {
-                conversation: {
-              id: "${this.props.conversationId}"
-              }
+              Message(filter: {
+                AND: [{
+                  mutation_in: [CREATED]
+                }, {
+                  node: {
+                    conversation: {
+                      id: "${this.props.conversationId}"
+                    }
+                  }
+                }]  
               }) {
-                  text
-                  createdAt
+                  node {
+                      id
+                      text
+                      createdAt
+                      agent {
+                          id
+                          slackUserName
+                      }
+                  }
               }
           }
       `,
       updateQuery: (previousState, {subscriptionData}) => {
         console.log('Subscription received: ', previousState, subscriptionData)
-        const newMessage = subscriptionData.data.createMessage
+        const newMessage = subscriptionData.data.Message.node
         const messages = previousState.allMessages ? previousState.allMessages.concat([newMessage]) : [newMessage]
 
         return {
           allMessages: messages,
         }
       },
-      onError: (err) => console.error(err),
+      onError: (err) => console.error('An error occured while being subscribed: ', err),
     })
   }
 
