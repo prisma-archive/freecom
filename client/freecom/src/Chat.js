@@ -56,10 +56,11 @@ class Chat extends Component {
     this.newMessageSubscription = this.props.allMessagesQuery.subscribeToMore({
       document: gql`
           subscription {
-              createMessage(filter: {
-              conversation: {
-              id: "${this.props.conversationId}"
-              }
+              Message(filter: {
+                mutation_in: [CREATED],
+                conversation: {
+                  id: "${this.props.conversationId}"
+                }
               }) {
                   text
                   createdAt
@@ -68,7 +69,7 @@ class Chat extends Component {
       `,
       updateQuery: (previousState, {subscriptionData}) => {
         console.log('Subscription received: ', previousState, subscriptionData)
-        const newMessage = subscriptionData.data.createMessage
+        const newMessage = subscriptionData.data.Message
         const messages = previousState.allMessages ? previousState.allMessages.concat([newMessage]) : [newMessage]
 
         return {
