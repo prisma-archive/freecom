@@ -16,8 +16,6 @@ class ConversationItem extends Component {
       message = lastMessage.text
     }
     else {
-      const createdAtTimestamp = new Date(this.props.conversation.updatedAt).getTime()
-      const nowTimestamp = new Date().getTime()
       ago = ''
       message = 'Start a new conversation'
     }

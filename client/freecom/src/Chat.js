@@ -56,10 +56,7 @@ class Chat extends Component {
 
   state = {
     message: '',
-  }
-
-  componentWillReceiveProps(nextProps) {
-    console.log('Chat - componentWillReceiveProps', nextProps)
+    isUploadingImage: false,
   }
 
   componentDidMount() {
@@ -67,26 +64,26 @@ class Chat extends Component {
     this.newMessageSubscription = this.props.allMessagesQuery.subscribeToMore({
       document: gql`
           subscription {
-              Message(filter: {
+            Message(filter: {
               AND: [{
-              mutation_in: [CREATED]
+                mutation_in: [CREATED]
               }, {
-              node: {
-              conversation: {
-              id: "${this.props.conversationId}"
-              }
-              }
-              }]
-              }) {
-                  node {
-                      id
-                      text
-                      createdAt
-                      agent {
-                          id
-                          slackUserName
-                      }
+                node: {
+                  conversation: {
+                    id: "${this.props.conversationId}"
                   }
+                }
+              }]
+            }) {
+                node {
+                  id
+                  text
+                  createdAt
+                  agent {
+                    id
+                    slackUserName
+                  }
+                }
               }
           }
       `,
@@ -103,6 +100,37 @@ class Chat extends Component {
     })
   }
 
+  _onFileDrop = (acceptedFiles, rejectedFiles) => {
+    console.log('Accepted files: ', acceptedFiles)
+    console.log('Rejected files: ', rejectedFiles)
+
+    // prepare form data, use data key!
+    let data = new FormData()
+    data.append('data', acceptedFiles[0])
+
+    this.setState({isUploadingImage: true})
+
+    // use the file endpoint
+    fetch('https://api.graph.cool/file/v1/cizf8g3fr1sp90139ikdjayb7', {
+      method: 'POST',
+      body: data
+    }).then(response => {
+      return response.json()
+    }).then(image => {
+      this.props.createMessageMutation({
+        variables: {
+          text: 'Uploaded image',
+          conversationId: this.props.conversationId,
+        }
+      })
+      this.setState({isUploadingImage: false})
+    }).catch(error => {
+      this.setState({isUploadingImage: false})
+    })
+  }
+
+
+
   render() {
 
     if (this.props.allMessagesQuery.loading) {
@@ -111,10 +139,9 @@ class Chat extends Component {
 
     return (
       <div className='Chat'>
-
         <Dropzone
           className='Dropzone'
-          onDrop={() => console.log('Drop it like its hot')}
+          onDrop={this._onFileDrop}
           accept='image/*'
           multiple={false}
           disableClick={true}
@@ -122,12 +149,15 @@ class Chat extends Component {
           <ChatMessages
             messages={this.props.allMessagesQuery.allMessages || []}
           />
-
+          {this.state.isUploadingImage &&
+            <div className='UploadImageIndicator'>Uploading image ...</div>
+          }
           <ChatInput
             message={this.state.message}
             onTextInput={message => this.setState({message})}
             onResetText={() => this.setState({message: ''})}
             onSend={this._onSend}
+            onDrop={this._onFileDrop}
           />
         </Dropzone>
         <div

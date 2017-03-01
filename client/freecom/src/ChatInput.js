@@ -22,7 +22,7 @@ class ChatInput extends Component {
         />
         <Dropzone
           className='Dropzone'
-          onDrop={() => console.log('Drop it like its hot')}
+          onDrop={this.props.onDrop}
           accept='image/*'
           multiple={false}
         >
