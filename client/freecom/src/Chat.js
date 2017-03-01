@@ -4,12 +4,13 @@ import ChatInput from './ChatInput'
 import ChatMessages from './ChatMessages'
 import { graphql, compose } from 'react-apollo'
 import gql from 'graphql-tag'
+import Dropzone from 'react-dropzone'
 
 const findConversations = gql`
     query allConversations($customerId: ID!) {
-        allConversations(filter: { 
+        allConversations(filter: {
         customer: {
-            id: $customerId
+        id: $customerId
         } }){
             id
             slackChannelName
@@ -35,9 +36,9 @@ const createMessage = gql`
 const allMessages = gql`
     query allMessages($conversationId: ID!) {
         allMessages(filter: {
-          conversation: {
-            id: $conversationId
-          }
+        conversation: {
+        id: $conversationId
+        }
         })
         {
             id
@@ -67,15 +68,15 @@ class Chat extends Component {
       document: gql`
           subscription {
               Message(filter: {
-                AND: [{
-                  mutation_in: [CREATED]
-                }, {
-                  node: {
-                    conversation: {
-                      id: "${this.props.conversationId}"
-                    }
-                  }
-                }]  
+              AND: [{
+              mutation_in: [CREATED]
+              }, {
+              node: {
+              conversation: {
+              id: "${this.props.conversationId}"
+              }
+              }
+              }]
               }) {
                   node {
                       id
@@ -110,15 +111,25 @@ class Chat extends Component {
 
     return (
       <div className='Chat'>
-        <ChatMessages
-          messages={this.props.allMessagesQuery.allMessages || []}
-        />
-        <ChatInput
-          message={this.state.message}
-          onTextInput={message => this.setState({message})}
-          onResetText={() => this.setState({message: ''})}
-          onSend={this._onSend}
-        />
+
+        <Dropzone
+          className='Dropzone'
+          onDrop={() => console.log('Drop it like its hot')}
+          accept='image/*'
+          multiple={false}
+          disableClick={true}
+        >
+          <ChatMessages
+            messages={this.props.allMessagesQuery.allMessages || []}
+          />
+
+          <ChatInput
+            message={this.state.message}
+            onTextInput={message => this.setState({message})}
+            onResetText={() => this.setState({message: ''})}
+            onSend={this._onSend}
+          />
+        </Dropzone>
         <div
           className='BackButton'
           onClick={() => this.props.resetConversation()}

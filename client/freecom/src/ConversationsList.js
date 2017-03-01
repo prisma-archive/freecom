@@ -5,9 +5,6 @@ import ConversationItem from './ConversationItem'
 class ConversationsList extends Component {
 
   render() {
-
-    console.log('ConversationsList - render - conversations: ', this.props.conversations)
-
     return (
       <div className=''>
         {this.props.conversations.map((conversation, i) => {

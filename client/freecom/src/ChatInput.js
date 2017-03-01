@@ -1,5 +1,6 @@
 import React, { Component} from 'react'
 import './ChatInput.css'
+import Dropzone from 'react-dropzone'
 
 class ChatInput extends Component {
 
@@ -19,11 +20,19 @@ class ChatInput extends Component {
             }
           }}
         />
-        {/*<div*/}
-          {/*onClick={() => this.props.onSend()}*/}
-        {/*>*/}
-          {/*Send*/}
-        {/*</div>*/}
+        <Dropzone
+          className='Dropzone'
+          onDrop={() => console.log('Drop it like its hot')}
+          accept='image/*'
+          multiple={false}
+        >
+          <img
+            src={require('./assets/attachment.svg')}
+            alt=""
+            width={36}
+            height={36}
+          />
+        </Dropzone>
       </div>
     )
   }

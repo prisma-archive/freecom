@@ -2,8 +2,11 @@
     display: flex;
     justify-content: center;
     width: 100%;
-    background-color: green;
     margin-top: 25px;
+}
+
+.Dropzone {
+    height: 100%;
 }
 
 .InputField {

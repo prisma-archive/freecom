@@ -21,6 +21,7 @@ class ChatMessage extends Component {
         <div className='Message'>{messagePrefix + this.props.message}</div>
       </div>
     )
+
   }
 
 }
