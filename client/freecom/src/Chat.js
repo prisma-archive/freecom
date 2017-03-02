@@ -160,10 +160,6 @@ class Chat extends Component {
             onSend={this._onSend}
             onDrop={this._onFileDrop}
           />
-          <div
-            className='BackButton'
-            onClick={() => this.props.resetConversation()}
-          >Back</div>
         </div>
       </Dropzone>
     )

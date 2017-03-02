@@ -135,11 +135,11 @@ class App extends Component {
             <div className="container">
               <div className={panelStyles}>
                 <div className="header interior-padding">
-                  <div className="avatar-spacer gutter-left">
+                  <div className="fadeInLeft avatar-spacer gutter-left">
                     <h3>Header</h3>
-                    <p className='opaque'>subtitle goes here</p>
+                    <p className='opaque fadeInLeft'>subtitle goes here</p>
                   </div>
-                  <div className="mobile-button drop-shadow" onClick={() => this._togglePanel()}>×</div>
+                  <div className="mobile-button drop-shadow fadeInLeft" onClick={() => this._togglePanel()}>×</div>
                 </div>
                 <div className="body overflow-scroll">
                   <ConversationsList
@@ -165,8 +165,10 @@ class App extends Component {
 
             <div className="container">
               <div className={panelStyles}>
-                <div className="header interior-padding">
-                  <div className="avatar-spacer gutter-left">
+                <div className="header flex interior-padding">
+                  <div className="radius fadeInLeft back-button pointer" onClick={this._resetConversation}>{'<'}</div>
+                  <div className="avatar fadeInLeft"></div>
+                  <div className="gutter-left">
                     Header
                     <p className='opaque'>subtitle goes here</p>
                   </div>

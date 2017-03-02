@@ -13,6 +13,19 @@
 .radius-bottom { border-radius: 0 0 9px 9px; }
 .hide { visibility: hidden; }
 .opaque { opacity: 0.65; }
+
+.opacity-0 { opacity: 0.0}
+.opacity-1 { opacity: 0.1}
+.opacity-2 { opacity: 0.2}
+.opacity-3 { opacity: 0.3}
+.opacity-4 { opacity: 0.4}
+.opacity-5 { opacity: 0.5}
+.opacity-6 { opacity: 0.6}
+.opacity-7 { opacity: 0.7}
+.opacity-8 { opacity: 0.8}
+.opacity-9 { opacity: 0.9}
+.opacity-10 { opacity: 1}
+
 .pointer { cursor: pointer; }
 .hover-gray:hover { background-color: #f6f7f9; }
 .background-gray {  background-color: #edf1f4; }
@@ -130,6 +143,15 @@
     border-radius: 20px;
     text-align: center;
     color: white;
+}
+
+.back-button {
+    padding: 20px
+}
+
+.back-button:hover {
+    background-color: rgba(0, 0, 0, 0.09);
+    transition: 0.3s ease background-color;
 }
 
 .button, .mobile-button {
