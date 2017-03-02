@@ -138,7 +138,7 @@ class Chat extends Component {
     }
 
     return (
-      <div className='Chat'>
+      <div className='body overflow-scroll'>
         <Dropzone
           className='Dropzone'
           onDrop={this._onFileDrop}

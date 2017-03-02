@@ -10,16 +10,32 @@ class ChatMessage extends Component {
     const nowTimestamp = new Date().getTime()
     const ago = timeDifference(nowTimestamp, createdAtTimestamp)
 
-    const leftAlign = !Boolean(this.props.sentByAgent)
     const messagePrefix = Boolean(this.props.sentByAgent) ? this.props.sentByAgent.slackUserName + ': ' : 'You: '
 
     return (
-      <div className={leftAlign ? 'ChatMessageLeftAlign' : 'ChatMessageRightAlign'}>
-        <div className='MessageHeader'>
-          <div className='Time'>({ago})</div>
+    <div>
+
+      <div style={{display: !this.props.sentByAgent ? 'visible' : 'none'}} className='interior-padding'>
+        <div className='flex flex-bottom'>
+          <div className="avatar"></div>
+          <div className='opaque background-gray interior-padding radius opaque'>
+            <p>{messagePrefix + this.props.message}</p>
+            ({ago})
+          </div>
         </div>
-        <div className='Message'>{messagePrefix + this.props.message}</div>
       </div>
+
+      <div style={{display: this.props.sentByAgent ? 'visible' : 'none'}} className='interior-padding'>
+        <div className='background-gray'>
+          <div className="avatar"></div>
+          <div className='opaque'>
+            {messagePrefix + this.props.message}
+            ({ago})
+          </div>
+        </div>
+      </div>
+
+    </div>
     )
 
   }

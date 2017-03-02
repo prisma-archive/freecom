@@ -117,7 +117,7 @@ class App extends Component {
     const customerId = localStorage.getItem(FREECOM_CUSTOMER_ID_KEY)
     const customerExists = Boolean(customerId)
     const conversationExists = Boolean(this.state.conversationId)
-    const panelStyles = cx('panel drop-shadow radius', {
+    const panelStyles = cx('panel drop-shadow radius overflow-hidden', {
       'hide': !this.state.isOpen,
       'fadeInUp':this.state.isOpen,
     })
@@ -133,23 +133,27 @@ class App extends Component {
               <div className={panelStyles}>
                 <div className="header interior-padding">
                   <div className="avatar-spacer gutter-left">
-                    Header
+                    <h3>Header</h3>
                     <p className='opaque'>subtitle goes here</p>
                   </div>
                   <div className="mobile-button drop-shadow" onClick={() => this._togglePanel()}>×</div>
                 </div>
-                <div className="body">
+                <div className="body overflow-scroll">
                   <ConversationsList
                     conversations={this.state.conversations}
                     onSelectConversation={this._onSelectConversation}
                   />
-                  <div
-                    className="conversation-button"
-                    onClick={() => this._createNewConversation()}
-                  >New Conversation</div>
+                  <div className="flex flex-hcenter full-width conversation-button-wrapper">
+                    <div
+                      className="conversation-button background-darkgray drop-shadow-hover pointer flex-center flex"
+                      onClick={() => this._createNewConversation()}
+                    >
+                      <p>New Conversation</p>
+                    </div>
+                  </div>
                 </div>
               </div>
-              <div className="button drop-shadow" onClick={() => this._togglePanel()}></div>
+              <div className="button drop-shadow-hover pointer" onClick={() => this._togglePanel()}></div>
             </div>
           </div>
           :
@@ -163,7 +167,7 @@ class App extends Component {
                     Header
                     <p className='opaque'>subtitle goes here</p>
                   </div>
-                  <div className="mobile-button drop-shadow" onClick={() => this._togglePanel()}>×</div>
+                  <div className="mobile-button drop-shadow-hover" onClick={() => this._togglePanel()}>×</div>
                 </div>
                 <Chat
                   conversationId={this.state.conversationId}
@@ -171,7 +175,7 @@ class App extends Component {
                   resetConversation={this._resetConversation}
                 />
               </div>
-              <div className="button drop-shadow" onClick={() => this._togglePanel()}></div>
+              <div className="button pointer drop-shadow-hover" onClick={() => this._togglePanel()}></div>
             </div>
           </div>
         }
