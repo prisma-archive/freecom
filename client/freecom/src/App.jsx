@@ -120,7 +120,7 @@ class App extends Component {
     const customerId = localStorage.getItem(FREECOM_CUSTOMER_ID_KEY)
     const customerExists = Boolean(customerId)
     const conversationExists = Boolean(this.state.conversationId)
-    const panelStyles = cx('panel drop-shadow radius', {
+    const panelStyles = cx('panel drop-shadow radius overflow-hidden', {
       'hide': !this.state.isOpen,
       'fadeInUp':this.state.isOpen,
     })
@@ -141,7 +141,7 @@ class App extends Component {
                   </div>
                   <div className="mobile-button drop-shadow" onClick={() => this._togglePanel()}>×</div>
                 </div>
-                <div className="body">
+                <div className="body overflow-scroll">
                   <ConversationsList
                     conversations={this.state.conversations}
                     onSelectConversation={this._onSelectConversation}
