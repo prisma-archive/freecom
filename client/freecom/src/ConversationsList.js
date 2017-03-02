@@ -6,7 +6,7 @@ class ConversationsList extends Component {
 
   render() {
     return (
-      <div className=''>
+      <div className='conversation-list'>
         {this.props.conversations.map((conversation, i) => {
           return (<ConversationItem
             key={i}

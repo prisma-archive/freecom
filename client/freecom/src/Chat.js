@@ -145,7 +145,7 @@ class Chat extends Component {
         multiple={false}
         disableClick={true}
       >
-        <div className='body overflow-scroll'>
+        <div className='message-body overflow-scroll'>
 
           <ChatMessages
             messages={this.props.allMessagesQuery.allMessages || []}
@@ -160,10 +160,6 @@ class Chat extends Component {
             onSend={this._onSend}
             onDrop={this._onFileDrop}
           />
-          <div
-            className='BackButton'
-            onClick={() => this.props.resetConversation()}
-          >Back</div>
         </div>
       </Dropzone>
     )

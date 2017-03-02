@@ -14,23 +14,25 @@ class ChatMessage extends Component {
 
     return (
     <div className='fadeInLeft'>
-
-      <div style={{display: !this.props.sentByAgent ? 'visible' : 'none'}} className='interior-padding'>
+      <div style={{display: this.props.sentByAgent ? 'visible' : 'none'}} className='message-padding'>
         <div className='flex flex-bottom'>
-          <div className="avatar"></div>
-          <div className='opaque background-gray interior-padding radius opaque'>
-            <p>{messagePrefix + this.props.message}</p>
-            ({ago})
+          <div className="avatar message-avatar"></div>
+          <div className='message-container message-container-padding-left'>
+            <div className='opaque background-gray padding-20 radius opaque'>
+              <p>{this.props.message}</p>
+            </div>
+            <p className='right opacity-4'>{ago}</p>
           </div>
         </div>
       </div>
 
-      <div style={{display: this.props.sentByAgent ? 'visible' : 'none'}} className='interior-padding'>
-        <div className='background-gray'>
-          <div className="avatar"></div>
-          <div className='opaque'>
-            {messagePrefix + this.props.message}
-            ({ago})
+      <div style={{display: !this.props.sentByAgent ? 'visible' : 'none'}} className='message-padding'>
+        <div className='flex flex-bottom'>
+          <div className='message-container message-container-padding-right flex-right'>
+            <div className='opaque background-gray padding-20 radius opaque'>
+              <p>{this.props.message}</p>
+            </div>
+            <p className='right opacity-4'>{ago}</p>
           </div>
         </div>
       </div>

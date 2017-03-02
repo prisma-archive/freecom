@@ -133,19 +133,19 @@ class App extends Component {
               <div className={panelStyles}>
                 <div className="header interior-padding">
                   <div className="avatar-spacer gutter-left">
-                    <h3>Header</h3>
-                    <p className='opaque'>subtitle goes here</p>
+                    <h3 className='fadeInLeft'>Header</h3>
+                    <p className='opaque fadeInLeft'>subtitle goes here</p>
                   </div>
-                  <div className="mobile-button drop-shadow" onClick={() => this._togglePanel()}>×</div>
+                  <div className="mobile-button-close pointer fadeInLeft" onClick={() => this._togglePanel()}>×</div>
                 </div>
                 <div className="body overflow-scroll">
                   <ConversationsList
                     conversations={this.state.conversations}
                     onSelectConversation={this._onSelectConversation}
                   />
-                  <div className="flex flex-hcenter full-width conversation-button-wrapper">
+                  <div className="flex flex-hcenter full-width conversation-button-wrapper pointer-events-none">
                     <div
-                      className="conversation-button background-darkgray drop-shadow-hover pointer flex-center flex"
+                      className="conversation-button background-darkgray drop-shadow-hover pointer flex-center flex pointer-events-initial"
                       onClick={() => this._createNewConversation()}
                     >
                       <p>New Conversation</p>
@@ -162,12 +162,13 @@ class App extends Component {
 
             <div className="container">
               <div className={panelStyles}>
-                <div className="header interior-padding">
-                  <div className="avatar-spacer gutter-left">
+                <div className="header flex interior-padding">
+                  <div className="radius fadeInLeft back-button pointer" onClick={this._resetConversation}>{'<'}</div>
+                  <div className="avatar fadeInLeft"></div>
+                  <div className="fadeInLeft gutter-left">
                     Header
-                    <p className='opaque'>subtitle goes here</p>
+                    <p className='fadeInLeft opaque'>subtitle goes here</p>
                   </div>
-                  <div className="mobile-button drop-shadow-hover" onClick={() => this._togglePanel()}>×</div>
                 </div>
                 <Chat
                   conversationId={this.state.conversationId}
