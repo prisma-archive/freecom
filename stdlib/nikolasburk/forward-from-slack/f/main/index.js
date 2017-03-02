@@ -36,6 +36,11 @@ module.exports = (params, callback) => {
       }) {
         id
         slackChannelName
+        agent {
+          id
+          slackUserName
+          slackUserId
+        }
       }
       allAgents(filter: {slackUserId: "${slackUserId}"}) {
         id
@@ -43,23 +48,44 @@ module.exports = (params, callback) => {
     }
   `).then(response => {
 
-    const conversationId = response.allConversations[0].id
+    const conversation = response.allConversations[0]
+    const conversationId = conversation.id
     const agentId = response.allAgents[0].id
 
-    client.mutate(`
+    const needToUpdateAgentInConversation = conversation.agent ?  (agentId !== conversation.agent.id) : true
+
+    const mutationWithoutUpdatingAgent = `
     {
       createMessage(text: "${message}", conversationId: "${conversationId}", agentId: "${agentId}") {
         id
       }
     }
-    `).then(response => {
-      return callback(null, 'Posted message to Graphcool!  ' + slackChannelName + '; ' + conversationId)
-    })
-      .catch(error => {
+    `
+
+    const mutationWitUpdatingAgent = `
+    {
+      createMessage(text: "${message}", conversationId: "${conversationId}", agentId: "${agentId}") {
+        id
+      }
+      updateConversation(id: "${conversationId}", agentId: "${agentId}") {
+        id
+      }
+    }
+    `
+
+    const createMessageMutation = needToUpdateAgentInConversation ? mutationWitUpdatingAgent : mutationWithoutUpdatingAgent
+
+    client.mutate(createMessageMutation)
+      .then(() => {
+        let response = 'Posted message to Graphcool:  \'' + message + '\' (conversation:  ' + conversationId + ')'
+        if (needToUpdateAgentInConversation) {
+          response = response + '\n: Also updated the agent in the conversation: ' + agentId
+        }
+        return callback(null, response)
+    }).catch(error => {
         console.error('ERROR: ', error)
         return callback(error, 'Could not post message to Graphcool!  ' + responseString)
-      })
-
+    })
   }).catch(error => {
     console.error('ERROR: ', error)
     return callback(error, 'Could not query conversations!')

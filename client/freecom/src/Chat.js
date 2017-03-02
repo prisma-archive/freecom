@@ -10,7 +10,7 @@ const findConversations = gql`
     query allConversations($customerId: ID!) {
         allConversations(filter: {
         customer: {
-        id: $customerId
+          id: $customerId
         } }){
             id
             slackChannelName
