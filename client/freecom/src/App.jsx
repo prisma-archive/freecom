@@ -84,7 +84,6 @@ class App extends Component {
     const customerId = localStorage.getItem(FREECOM_CUSTOMER_ID_KEY)
     const username = localStorage.getItem(FREECOM_CUSTOMER_NAME_KEY)
 
-    console.log('Got customer Id from local storage: ', customerId)
     if (Boolean(customerId) && Boolean(username)) {
 
       // customer already exists, find all conversations for that customer
@@ -95,7 +94,6 @@ class App extends Component {
         }
       })
 
-      console.log('Find conversations result: ', findConversationsResult)
       this.setState({conversations: findConversationsResult.data.allConversations})
 
     }
@@ -107,7 +105,6 @@ class App extends Component {
           name: username,
         }
       })
-      console.log('Did create new customer: ', result.data)
       const customerId = result.data.createCustomer.id
       localStorage.setItem(FREECOM_CUSTOMER_ID_KEY, customerId)
       localStorage.setItem(FREECOM_CUSTOMER_NAME_KEY, username)

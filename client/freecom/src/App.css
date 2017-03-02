@@ -16,8 +16,8 @@
 .CreateConversationButton {
   width: 100%;
   text-align: center;
-  margin: 25px 0 25px 0;
-  padding: 12px 12px 12px 12px;
+  margin: 25px 0;
+  padding: 12px;
   font-size: 20px;
   cursor: pointer;
   background-color: rgba(39,174,96,1);
@@ -87,11 +87,14 @@
 }
 
 .avatar {
-    min-width: 40px;
-    min-height: 40px;
+    width: 40px;
+    height: 40px;
     margin-right: 10px;
     border-radius: 50%;
     background: url(https://unsplash.it/100) no-repeat;
+    flex: 0 0 auto;
+    background-size: cover;
+    background-position: center;
 }
 
 .avatar-spacer { padding-left: 50px; }
