@@ -139,16 +139,16 @@ class App extends Component {
                     <h3 className='fadeInLeft'>Header</h3>
                     <p className='opaque fadeInLeft'>subtitle goes here</p>
                   </div>
-                  <div className="mobile-button drop-shadow fadeInLeft" onClick={() => this._togglePanel()}>×</div>
+                  <div className="mobile-button-close pointer fadeInLeft" onClick={() => this._togglePanel()}>×</div>
                 </div>
                 <div className="body overflow-scroll">
                   <ConversationsList
                     conversations={this.state.conversations}
                     onSelectConversation={this._onSelectConversation}
                   />
-                  <div className="flex flex-hcenter full-width conversation-button-wrapper">
+                  <div className="flex flex-hcenter full-width conversation-button-wrapper pointer-events-none">
                     <div
-                      className="conversation-button background-darkgray drop-shadow-hover pointer flex-center flex"
+                      className="conversation-button background-darkgray drop-shadow-hover pointer flex-center flex pointer-events-initial"
                       onClick={() => this._createNewConversation()}
                     >
                       <p>New Conversation</p>
@@ -172,7 +172,6 @@ class App extends Component {
                     Header
                     <p className='fadeInLeft opaque'>subtitle goes here</p>
                   </div>
-                  <div className="mobile-button drop-shadow-hover" onClick={() => this._togglePanel()}>×</div>
                 </div>
                 <Chat
                   conversationId={this.state.conversationId}

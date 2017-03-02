@@ -32,12 +32,16 @@
 .padding-40 { padding: 40px; }
 .padding-50 { padding: 50px; }
 .padding-v-20 {padding: 20px 0; }
+.padding-h-20 {padding: 0 20px; }
 
 .pointer { cursor: pointer; }
+.pointer-events-none { pointer-events: none; }
+.pointer-events-initial { pointer-events: initial; }
 .hover-gray:hover { background-color: #f6f7f9; }
 .background-gray {  background-color: #edf1f4; }
 .background-darkgray { background-color: #8196b2; }
 .background-white { background-color: white; }
+.white { color: white; }
 .gutter-left { margin-left: 10px }
 .right { float: right}
 .full-width { width: 100%; }
@@ -45,6 +49,7 @@
 .flex-hcenter { justify-content: center; }
 .overflow-hidden {  overflow: hidden; }
 .overflow-scroll { overflow: scroll; }
+.flex-right { margin-left: auto; }
 
 
 .fadeInUp {  animation: fadeInUp 0.4s ease 0s 1 normal;  }
@@ -89,8 +94,12 @@
     background-color: white;
 }
 
-.panel .body, .panel .Dropzone {
+.panel .Dropzone, .panel .message-body {
     height: calc(100% - 68px);
+}
+
+.panel .body {
+    height: calc(100% - 80px);
 }
 
 .header {
@@ -110,13 +119,28 @@
     background: url(https://unsplash.it/100) no-repeat;
 }
 
+.message-padding {
+    padding: 10px 24px;
+}
+
 .message-container {
-    padding-right: 40px;
     max-width: 100%;
+}
+
+.message-container-padding-left {
+    padding-right: 40px;
+}
+
+.message-container-padding-right {
+    padding-left: 40px;
 }
 
 .message-avatar {
     margin-bottom: 16px;
+}
+
+.conversation-list {
+    padding-bottom: 80px;
 }
 
 .chat-input {
@@ -162,7 +186,8 @@
 }
 
 .back-button {
-    padding: 20px
+    padding: 20px;
+    margin: 0 12px;
 }
 
 .back-button:hover {
@@ -180,7 +205,18 @@
     background-color: #00BCD4;
 }
 
-.mobile-button {  display: none;  }
+.mobile-button-close {
+    position: absolute;
+    right: 20px;
+    top: 30px;
+    float: right;
+    width: 30px;
+    height: 30px;
+    text-align: center;
+    color: white;
+    font-size: 30px;
+    display: none;
+}
 
 /*//////////QUERIES/////////////////////////////////////////////////////*/
 @media screen and ( max-height: 700px ){
@@ -205,6 +241,7 @@
         right: 0;
         bottom: 0;
         border-radius: 0;
+        margin-bottom: 0px;
         height: 100%;
         z-index: 22222222;
     }
@@ -216,7 +253,7 @@
         margin: 20px;
     }
 
-    .mobile-button {  display: block;  }
+    .mobile-button-close {  display: block;  }
 }
 
 
