@@ -138,14 +138,15 @@ class Chat extends Component {
     }
 
     return (
-      <div className='body overflow-scroll'>
-        <Dropzone
-          className='Dropzone'
-          onDrop={this._onFileDrop}
-          accept='image/*'
-          multiple={false}
-          disableClick={true}
-        >
+      <Dropzone
+        className='Dropzone'
+        onDrop={this._onFileDrop}
+        accept='image/*'
+        multiple={false}
+        disableClick={true}
+      >
+        <div className='body overflow-scroll'>
+
           <ChatMessages
             messages={this.props.allMessagesQuery.allMessages || []}
           />
@@ -159,12 +160,12 @@ class Chat extends Component {
             onSend={this._onSend}
             onDrop={this._onFileDrop}
           />
-        </Dropzone>
-        <div
-          className='BackButton'
-          onClick={() => this.props.resetConversation()}
-        >Back</div>
-      </div>
+          <div
+            className='BackButton'
+            onClick={() => this.props.resetConversation()}
+          >Back</div>
+        </div>
+      </Dropzone>
     )
   }
 

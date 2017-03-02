@@ -10,12 +10,14 @@
 .drop-shadow-hover { box-shadow: 0px 6px 30px -4px rgba(0,0,0,0.0); transition: box-shadow 0.3s ease; }
 .box-shadow-inset {  box-shadow: inset 0px 5px 8px -1px rgba(0,0,0,0.12);  }
 .radius { border-radius: 9px; }
+.radius-bottom { border-radius: 0 0 9px 9px; }
 .hide { visibility: hidden; }
 .opaque { opacity: 0.8; }
 .pointer { cursor: pointer; }
 .hover-gray:hover { background-color: #f6f7f9; }
 .background-gray {  background-color: #edf1f4; }
 .background-darkgray { background-color: #8196b2; }
+.background-white { background-color: white; }
 .gutter-left { margin-left: 10px }
 .right { float: right}
 .full-width { width: 100%; }
@@ -45,6 +47,8 @@
 }
 
 .container div {  box-sizing: border-box;  }
+.container *:focus {  outline: none;  }
+
 
 .container p {
     font-size: 13px;
@@ -65,7 +69,7 @@
     background-color: white;
 }
 
-.panel .body {
+.panel .body, .panel .Dropzone {
     height: calc(100% - 80px);
 }
 
@@ -84,6 +88,28 @@
     margin-right: 10px;
     border-radius: 50%;
     background: url(https://unsplash.it/100) no-repeat;
+}
+
+.chat-input {
+    position: absolute;
+    bottom: 0;
+    left: 0;
+    right: 0;
+
+    -webkit-box-shadow: 0px -3px 28px -1px rgba(0,0,0,0.21);
+    -moz-box-shadow: 0px -3px 28px -1px rgba(0,0,0,0.21);
+    box-shadow: 0px -3px 28px -1px rgba(0,0,0,0.21);
+}
+
+.chat-input .input {
+    width: calc(100% - 40px);
+    height: auto;
+    border: 0px;
+}
+
+.chat-input .Dropzone {
+    width: 40px;
+    height: 40px;
 }
 
 .avatar-spacer { padding-left: 50px; }

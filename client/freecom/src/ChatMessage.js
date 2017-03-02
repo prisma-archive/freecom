@@ -13,7 +13,7 @@ class ChatMessage extends Component {
     const messagePrefix = Boolean(this.props.sentByAgent) ? this.props.sentByAgent.slackUserName + ': ' : 'You: '
 
     return (
-    <div>
+    <div className='fadeInLeft'>
 
       <div style={{display: !this.props.sentByAgent ? 'visible' : 'none'}} className='interior-padding'>
         <div className='flex flex-bottom'>
