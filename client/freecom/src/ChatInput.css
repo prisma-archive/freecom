@@ -1,22 +1,19 @@
-.ChatInput {
-    display: flex;
-    justify-content: center;
-    width: 100%;
-    margin-top: 20px;
-}
+/*.ChatInput {*/
+    /*display: flex;*/
+    /*justify-content: center;*/
+    /*width: 100%;*/
+    /*margin-top: 20px;*/
+/*}*/
 
-.Dropzone {
-    height: 100%;
-}
+/*.Dropzone {*/
+    /*height: 100%;*/
+/*}*/
 
-.InputField {
-    width: 100%;
-    height: 40px;
-    font-size: 16px;
-    padding: 0 12px 0 12px;
-    color: rgba(0,0,0,.7);
-}
+/*.InputField {*/
+    /*width: 100%;*/
+    /*height: 40px;*/
+    /*font-size: 16px;*/
+    /*padding: 0 12px 0 12px;*/
+    /*color: rgba(0,0,0,.7);*/
+/*}*/
 
-*:focus {
-    outline: none;
-}

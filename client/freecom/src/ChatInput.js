@@ -6,9 +6,10 @@ class ChatInput extends Component {
 
   render() {
     return (
-      <div className='ChatInput'>
-        <input
-          className='InputField'
+      <div className='chat-input flex flex-bottom radius-bottom background-white'>
+        <div
+          contentEditable='true'
+          className='InputField input interior-padding'
           type='text'
           value={this.props.message}
           autoFocus={true}
@@ -31,6 +32,7 @@ class ChatInput extends Component {
             alt=""
             width={36}
             height={36}
+            className='opaque'
           />
         </Dropzone>
       </div>
