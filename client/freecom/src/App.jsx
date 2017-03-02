@@ -135,8 +135,8 @@ class App extends Component {
             <div className="container">
               <div className={panelStyles}>
                 <div className="header interior-padding">
-                  <div className="fadeInLeft avatar-spacer gutter-left">
-                    <h3>Header</h3>
+                  <div className="avatar-spacer gutter-left">
+                    <h3 className='fadeInLeft'>Header</h3>
                     <p className='opaque fadeInLeft'>subtitle goes here</p>
                   </div>
                   <div className="mobile-button drop-shadow fadeInLeft" onClick={() => this._togglePanel()}>×</div>
@@ -168,9 +168,9 @@ class App extends Component {
                 <div className="header flex interior-padding">
                   <div className="radius fadeInLeft back-button pointer" onClick={this._resetConversation}>{'<'}</div>
                   <div className="avatar fadeInLeft"></div>
-                  <div className="gutter-left">
+                  <div className="fadeInLeft gutter-left">
                     Header
-                    <p className='opaque'>subtitle goes here</p>
+                    <p className='fadeInLeft opaque'>subtitle goes here</p>
                   </div>
                   <div className="mobile-button drop-shadow-hover" onClick={() => this._togglePanel()}>×</div>
                 </div>

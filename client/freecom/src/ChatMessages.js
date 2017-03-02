@@ -6,7 +6,7 @@ class ChatMessages extends Component {
 
   render() {
     return (
-      <div className='ChatMessages'>
+      <div className='ChatMessages padding-v-20'>
         {this.props.messages.map((message, i) => {
           return (<ChatMessage
             key={i}
