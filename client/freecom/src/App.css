@@ -3,6 +3,7 @@
 .flex {  display: flex;  }
 .flex-direction { flex-direction: row }
 .flex-bottom { align-items: flex-end; }
+.space-between {justify-content: space-between; }
 
 .interior-padding { padding: 30px }
 .drop-shadow {  box-shadow: 0px 6px 30px -4px rgba(0,0,0,0.45); }
@@ -74,9 +75,8 @@
 .container div {  box-sizing: border-box;  }
 .container *:focus {  outline: none;  }
 
-
 .container p {
-    font-size: 13px;
+    font-size: 12px;
     margin-top: 0;
     margin-bottom: 0;
 }
@@ -170,6 +170,9 @@
 
 .avatar-spacer { padding-left: 50px; }
 .conversation {  border-bottom: solid rgba(211, 211 ,211, 0.31) 1px;  }
+
+.conversation-text-padding {  padding: 0 12px; }
+.conversation-ago { width: 80px; }
 
 .conversation-button-wrapper {
     position: absolute;
