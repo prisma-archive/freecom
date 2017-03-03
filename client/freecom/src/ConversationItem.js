@@ -13,13 +13,13 @@ class ConversationItem extends Component {
       const createdAtTimestamp = new Date(lastMessage.createdAt).getTime()
       const nowTimestamp = new Date().getTime()
       ago = timeDifference(nowTimestamp, createdAtTimestamp)
-      message = lastMessage.text
+      message = lastMessage.text.split('').length > 32 ? lastMessage.text.split('').splice(0,32).join('') + '...' : lastMessage.text
     }
     else {
       ago = ''
       message = 'Start a new conversation'
     }
-
+    console.log(this.props.conversation)
     return (
       <div
         className='conversation interior-padding fadeInLeft pointer hover-gray'
@@ -27,9 +27,12 @@ class ConversationItem extends Component {
       >
         <div className="flex">
           <div className="avatar"></div>
-          <p>{message}</p>
-          <div className="full-width">
-            <p className='right opaque'>{ago}</p>
+          <div className='conversation-text-padding full-width'>
+            <div className="flex">
+              <p className='full-width opacity-6'>Name here</p>
+              <p className='opaque conversation-ago'>{ago}</p>
+            </div>
+            <p className='full-width opacity-8'>{message}</p>
           </div>
         </div>
       </div>
