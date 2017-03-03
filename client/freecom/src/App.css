@@ -108,6 +108,11 @@
     background-color: #00BCD4;
 }
 
+.header-padding {
+    padding-top: 16px;
+    padding-left: 12px;
+}
+
 .avatar {
     position: relative;
     width: 40px;
@@ -188,9 +193,15 @@
     color: white;
 }
 
+.conversation-header {
+    padding-left: 70px;
+    padding-top: 10px;
+}
+
 .back-button {
     padding: 20px;
     margin: 0 12px;
+    height: 50px;
 }
 
 .back-button:hover {

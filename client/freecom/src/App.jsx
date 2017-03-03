@@ -134,10 +134,10 @@ class App extends Component {
           <div>
             <div className="container">
               <div className={panelStyles}>
-                <div className="header interior-padding">
-                  <div className="avatar-spacer gutter-left">
-                    <h3 className='fadeInLeft'>Header</h3>
-                    <p className='opaque fadeInLeft'>subtitle goes here</p>
+                <div className="header header-padding">
+                  <div className="conversation-header gutter-left">
+                    <h3 className='fadeInLeft'>Conversations</h3>
+                    <p className='opaque fadeInLeft'>with Graphcool</p>
                   </div>
                   <div className="mobile-button-close pointer fadeInLeft" onClick={() => this._togglePanel()}>×</div>
                 </div>
@@ -165,12 +165,14 @@ class App extends Component {
 
             <div className="container">
               <div className={panelStyles}>
-                <div className="header flex interior-padding">
+                <div className="header flex header-padding">
                   <div className="radius fadeInLeft back-button pointer" onClick={this._resetConversation}>{'<'}</div>
-                  <div className="avatar fadeInLeft"></div>
-                  <div className="fadeInLeft gutter-left">
-                    Header
-                    <p className='fadeInLeft opaque'>subtitle goes here</p>
+                  <div className='padding-10 flex'>
+                    <div className="avatar fadeInLeft"></div>
+                    <div className="fadeInLeft gutter-left">
+                      Name
+                      <p className='fadeInLeft opaque'>Last time active</p>
+                    </div>
                   </div>
                 </div>
                 <Chat
