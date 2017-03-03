@@ -7,8 +7,7 @@ class ChatInput extends Component {
   render() {
     return (
       <div className='chat-input flex flex-bottom radius-bottom background-white'>
-        <div
-          contentEditable='true'
+        <input
           className='InputField input'
           type='text'
           value={this.props.message}

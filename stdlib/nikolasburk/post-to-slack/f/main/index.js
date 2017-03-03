@@ -21,15 +21,13 @@ module.exports = (params, callback) => {
   const text = params.kwargs.createdNode.text
   const slackChannelName = params.kwargs.createdNode.conversation.slackChannelName
   const username = params.kwargs.createdNode.conversation.customer.name
-  // const conversationId = params.kwargs.createdNode.conversation.id
-  // const customerId = params.kwargs.createdNode.conversation.customer.id
 
-  let postURL = 'https://slack.com/api/chat.postMessage?token=xoxp-143869968915-143869969027-147144818550-66059a896db494ecfd2afdee0f3f306b'
-  postURL = postURL + '&' + 'channel=' + slackChannelName
-  postURL = postURL + '&' + 'username=' + username
-  postURL = postURL + '&' + 'text=' + text
+  let slackURL = 'https://slack.com/api/chat.postMessage?token=xoxp-143869968915-143869969027-147144818550-66059a896db494ecfd2afdee0f3f306b'
+  slackURL = slackURL + '&' + 'channel=' + slackChannelName
+  slackURL = slackURL + '&' + 'username=' + username
+  slackURL = slackURL + '&' + 'text=' + text
 
-  fetch(postURL,
+  fetch(slackURL,
   {
       headers: {
         'Content-Type': 'application/json'
@@ -38,7 +36,7 @@ module.exports = (params, callback) => {
   })
   .then(response => { 
     console.log(response) 
-    return callback(null, 'Posted message to Slack!\n\n' + postURL)
+    return callback(null, 'Posted message to Slack!\n\n' + slackURL)
   })
   .catch(error => { 
     console.error(error)

@@ -129,8 +129,6 @@ class Chat extends Component {
     })
   }
 
-
-
   render() {
 
     if (this.props.allMessagesQuery.loading) {
