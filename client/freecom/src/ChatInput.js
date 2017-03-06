@@ -36,6 +36,7 @@ class ChatInput extends Component {
         >
           <img
             src={require('./assets/attachment.svg')}
+            alt=''
             width={36}
             height={36}
             className='opaque pointer'

@@ -205,12 +205,26 @@ class App extends Component {
               conversationId={this.state.selectedConversationId}
               customerId={customerId}
               resetConversation={this._resetConversation}
+              updateLastMessage={this._updateLastMessageInConversation}
             />
           </div>
           <div className='button pointer drop-shadow-hover' onClick={() => this._togglePanel()}></div>
         </div>
       </div>
     )
+  }
+
+  _updateLastMessageInConversation = (conversationId, newLastMessage) => {
+    const newConversations = this.state.conversations.slice()
+    const indexOfConversationToUpdate = newConversations.findIndex(conversation => {
+      return conversation.id === conversationId
+    })
+    const newConversation = {
+      ...newConversations[indexOfConversationToUpdate],
+      messages: [newLastMessage]
+    }
+    newConversations[indexOfConversationToUpdate] = newConversation
+    this.setState({conversations: newConversations})
   }
 
   _togglePanel = () => this.setState({isOpen: !this.state.isOpen})
@@ -234,7 +248,6 @@ class App extends Component {
 
   _createNewConversation = async (customerId, username) => {
 
-    console.debug('Create new conversation')
     // find channel with greatest position appended as suffix
     const channelPositions = this.state.conversations.map(conversation => {
       const slackChannelNameComponents = conversation.slackChannelName.split('-')
