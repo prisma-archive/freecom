@@ -91,41 +91,11 @@ class Chat extends Component {
         console.log('Subscription received: ', previousState, subscriptionData)
         const newMessage = subscriptionData.data.Message.node
         const messages = previousState.allMessages ? previousState.allMessages.concat([newMessage]) : [newMessage]
-
         return {
           allMessages: messages,
         }
       },
       onError: (err) => console.error('An error occured while being subscribed: ', err),
-    })
-  }
-
-  _onFileDrop = (acceptedFiles, rejectedFiles) => {
-    console.log('Accepted files: ', acceptedFiles)
-    console.log('Rejected files: ', rejectedFiles)
-
-    // prepare form data, use data key!
-    let data = new FormData()
-    data.append('data', acceptedFiles[0])
-
-    this.setState({isUploadingImage: true})
-
-    // use the file endpoint
-    fetch('https://api.graph.cool/file/v1/cizf8g3fr1sp90139ikdjayb7', {
-      method: 'POST',
-      body: data
-    }).then(response => {
-      return response.json()
-    }).then(image => {
-      this.props.createMessageMutation({
-        variables: {
-          text: 'Uploaded image',
-          conversationId: this.props.conversationId,
-        }
-      })
-      this.setState({isUploadingImage: false})
-    }).catch(error => {
-      this.setState({isUploadingImage: false})
     })
   }
 
@@ -169,6 +139,35 @@ class Chat extends Component {
         text: this.state.message,
         conversationId: this.props.conversationId,
       }
+    })
+  }
+
+  _onFileDrop = (acceptedFiles, rejectedFiles) => {
+    console.log('Accepted files: ', acceptedFiles)
+    console.log('Rejected files: ', rejectedFiles)
+
+    // prepare form data, use data key!
+    let data = new FormData()
+    data.append('data', acceptedFiles[0])
+
+    this.setState({isUploadingImage: true})
+
+    // use the file endpoint
+    fetch('https://api.graph.cool/file/v1/cizf8g3fr1sp90139ikdjayb7', {
+      method: 'POST',
+      body: data
+    }).then(response => {
+      return response.json()
+    }).then(image => {
+      this.props.createMessageMutation({
+        variables: {
+          text: 'Uploaded image',
+          conversationId: this.props.conversationId,
+        }
+      })
+      this.setState({isUploadingImage: false})
+    }).catch(error => {
+      this.setState({isUploadingImage: false})
     })
   }
 

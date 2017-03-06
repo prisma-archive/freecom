@@ -2,10 +2,14 @@ import React, { Component } from 'react'
 import cx from 'classnames'
 import './App.css'
 import Chat from './Chat'
+import ChatHeader from './ChatHeader'
 import ConversationsList from './ConversationsList'
+import ConversationsListHeader from './ConversationsListHeader'
 import { graphql, compose, withApollo } from 'react-apollo'
 import gql from 'graphql-tag'
 import generateStupidName from 'sillyname'
+
+const TEST_WITH_NEW_CUSTOMER = false
 
 const createCustomer = gql`
     mutation createCustomer($name: String!) {
@@ -72,14 +76,16 @@ class App extends Component {
     conversationId: null,
     conversations: [],
     displayState: 'CONVERSATIONS', // 'CONVERSATIONS' or 'CHAT'
-    isOpen: false,
+    isOpen: true,
   }
 
   async componentDidMount() {
 
     // TESTING
-    // localStorage.removeItem(FREECOM_CUSTOMER_ID_KEY)
-    // localStorage.removeItem(FREECOM_CUSTOMER_NAME_KEY)
+    if (TEST_WITH_NEW_CUSTOMER) {
+      localStorage.removeItem(FREECOM_CUSTOMER_ID_KEY)
+      localStorage.removeItem(FREECOM_CUSTOMER_NAME_KEY)
+    }
 
     const customerId = localStorage.getItem(FREECOM_CUSTOMER_ID_KEY)
     const username = localStorage.getItem(FREECOM_CUSTOMER_NAME_KEY)
@@ -131,13 +137,9 @@ class App extends Component {
           <div>
             <div className="container">
               <div className={panelStyles}>
-                <div className="header header-padding">
-                  <div className="conversation-header gutter-left">
-                    <h3 className='fadeInLeft'>Conversations</h3>
-                    <p className='opaque fadeInLeft'>with Graphcool</p>
-                  </div>
-                  <div className="mobile-button-close pointer fadeInLeft" onClick={() => this._togglePanel()}>×</div>
-                </div>
+                <ConversationsListHeader
+                  togglePanel={this._togglePanel}
+                />
                 <div className="body overflow-scroll">
                   <ConversationsList
                     conversations={this.state.conversations}
@@ -159,19 +161,12 @@ class App extends Component {
           :
           customerExists &&
           <div>
-
             <div className="container">
               <div className={panelStyles}>
-                <div className="header flex header-padding">
-                  <div className="radius fadeInLeft back-button pointer" onClick={this._resetConversation}>{'<'}</div>
-                  <div className='padding-10 flex'>
-                    <div className="avatar fadeInLeft"></div>
-                    <div className="fadeInLeft gutter-left">
-                      Name
-                      <p className='fadeInLeft opaque'>Last time active</p>
-                    </div>
-                  </div>
-                </div>
+                <ChatHeader
+                  agentName={'TEST'}
+                  resetConversation={this._resetConversation}
+                />
                 <Chat
                   conversationId={this.state.conversationId}
                   customerId={customerId}
@@ -182,7 +177,6 @@ class App extends Component {
             </div>
           </div>
         }
-
       </div>
     )
   }
@@ -200,8 +194,6 @@ class App extends Component {
       const slackChannelNameComponents = conversation.slackChannelName.split('-')
       return slackChannelNameComponents[slackChannelNameComponents.length-1]
     })
-
-    console.log('Channel positions: ', channelPositions)
 
     let newChannelPosition = 1
     if (channelPositions.length > 0) {

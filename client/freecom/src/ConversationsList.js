@@ -16,6 +16,7 @@ class ConversationsList extends Component {
         })}
       </div>
     )
+
   }
 
 }

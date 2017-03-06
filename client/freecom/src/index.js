@@ -24,6 +24,7 @@ const networkInterfaceWithSubscriptions = addGraphQLSubscriptions(
 
 const client = new ApolloClient({
   networkInterface: networkInterfaceWithSubscriptions,
+  dataIdFromObject: o => o.id,
 })
 
 
@@ -47,6 +48,7 @@ function render(element) {
 
 const freecom = {
   render,
+  companyName: 'Graphcool'
 }
 
 global['Freecom'] = freecom

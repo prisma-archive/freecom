@@ -25,7 +25,7 @@ module.exports = (params, callback) => {
   // const conversationId = params.kwargs.createdNode.id
   // const customerId = params.kwargs.createdNode.customer.id
   // const customerName = params.kwargs.createdNode.customer.name
-  const slackChannelName = params.kwargs.createdNode.slackChannelName
+  const slackChannelName = params.kwargs.createdNode.slackChannelName.toLowerCase()
   // const customerId = params.kwargs.channel
 
   // const text = 'Create new slack channel: ' + slackChannelName + '\n\n' + JSON.stringify(params.kwargs)
