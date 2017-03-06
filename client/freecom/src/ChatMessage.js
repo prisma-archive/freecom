@@ -4,6 +4,12 @@ import { timeDifference } from './utils'
 
 class ChatMessage extends Component {
 
+  static propTypes = {
+    message: React.PropTypes.string.isRequired,
+    time: React.PropTypes.string.isRequired,
+    sentByAgent: React.PropTypes.any,
+  }
+
   render() {
 
     const createdAtTimestamp = new Date(this.props.time).getTime()
@@ -44,9 +50,3 @@ class ChatMessage extends Component {
 }
 
 export default ChatMessage
-
-ChatMessage.propTypes = {
-  message: React.PropTypes.string.isRequired,
-  time: React.PropTypes.string.isRequired,
-  sentByAgent: React.PropTypes.any.isRequired,
-}

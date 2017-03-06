@@ -26,9 +26,9 @@ const createMessage = gql`
 const allMessages = gql`
     query allMessages($conversationId: ID!) {
         allMessages(filter: {
-        conversation: {
-        id: $conversationId
-        }
+          conversation: {
+            id: $conversationId
+          }
         })
         {
             id
@@ -43,6 +43,11 @@ const allMessages = gql`
 `
 
 class Chat extends Component {
+
+  static propTypes = {
+    conversationId: React.PropTypes.string.isRequired,
+    allMessagesQuery: React.PropTypes.any.isRequired,
+  }
 
   state = {
     message: '',
@@ -132,7 +137,7 @@ class Chat extends Component {
     this.props.createMessageMutation(this.state.message, this.props.conversationId)
   }
 
-  _onFileDrop = (acceptedFiles, rejectedFiles) => {
+  _onFileDrop = async (acceptedFiles, rejectedFiles) => {
     console.debug('Accepted files: ', acceptedFiles)
     console.debug('Rejected files: ', rejectedFiles)
 
@@ -143,22 +148,14 @@ class Chat extends Component {
     this.setState({isUploadingImage: true})
 
     // use the file endpoint
-    fetch('https://api.graph.cool/file/v1/cizf8g3fr1sp90139ikdjayb7', {
+    const response = await fetch('https://api.graph.cool/file/v1/cizf8g3fr1sp90139ikdjayb7', {
       method: 'POST',
       body: data
-    }).then(response => {
-      return response.json()
-    }).then(image => {
-      this.props.createMessageMutation({
-        variables: {
-          text: 'Uploaded image',
-          conversationId: this.props.conversationId,
-        }
-      })
-      this.setState({isUploadingImage: false})
-    }).catch(error => {
-      this.setState({isUploadingImage: false})
     })
+    this.setState({isUploadingImage: false})
+
+    const json = await response.json()
+    this.props.createMessageMutation('Uploaded image to URL: ' + json.url, this.props.conversationId)
   }
 
 }
@@ -181,11 +178,6 @@ export default graphql(createMessage, {
     }
   }
 })(ChatWithAllMessages)
-
-Chat.PropTypes = {
-  conversationId: React.PropTypes.string.isRequired,
-  allMessagesQuery: React.PropTypes.any.isRequired,
-}
 
 // export default compose(
 //   // graphql(findConversations, {name: 'findConversationsQuery'}),

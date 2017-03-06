@@ -4,6 +4,11 @@ import './App.css'
 
 class ChatHeader extends Component {
 
+  static propTypes = {
+    resetConversation: React.PropTypes.func.isRequired,
+    chatPartnerName: React.PropTypes.string.isRequired,
+  }
+
   render() {
     return (
       <div className='header flex header-padding'>
@@ -23,8 +28,3 @@ class ChatHeader extends Component {
 }
 
 export default ChatHeader
-
-ChatHeader.propTypes = {
-  resetConversation: React.PropTypes.func.isRequired,
-  chatPartnerName: React.PropTypes.string.isRequired,
-};

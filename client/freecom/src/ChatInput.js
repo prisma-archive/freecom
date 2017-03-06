@@ -4,6 +4,14 @@ import Dropzone from 'react-dropzone'
 
 class ChatInput extends Component {
 
+  static propTypes = {
+    message: React.PropTypes.string.isRequired,
+    onTextInput: React.PropTypes.func.isRequired,
+    onResetText: React.PropTypes.func.isRequired,
+    onSend: React.PropTypes.func.isRequired,
+    onDrop: React.PropTypes.func.isRequired,
+  }
+
   render() {
     return (
       <div className='chat-input flex flex-bottom radius-bottom background-white'>
@@ -39,11 +47,3 @@ class ChatInput extends Component {
 }
 
 export default ChatInput
-
-ChatInput.propTypes = {
-  message: React.PropTypes.string.isRequired,
-  onTextInput: React.PropTypes.func.isRequired,
-  onResetText: React.PropTypes.func.isRequired,
-  onSend: React.PropTypes.func.isRequired,
-  onDrop: React.PropTypes.func.isRequired,
-}

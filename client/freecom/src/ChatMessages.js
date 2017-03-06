@@ -4,6 +4,10 @@ import ChatMessage from './ChatMessage'
 
 class ChatMessages extends Component {
 
+  static propTypes = {
+    messages: React.PropTypes.array.isRequired,
+  }
+
   render() {
     return (
       <div className='ChatMessages padding-v-20'>
@@ -22,7 +26,3 @@ class ChatMessages extends Component {
 }
 
 export default ChatMessages
-
-ChatMessages.propTypes = {
-  messages: React.PropTypes.array.isRequired,
-}

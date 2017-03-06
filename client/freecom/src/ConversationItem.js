@@ -4,20 +4,24 @@ import { timeDifference } from './utils'
 
 class ConversationItem extends Component {
 
+  static propTypes = {
+    conversation: React.PropTypes.any.isRequired,
+    onSelectConversation: React.PropTypes.func.isRequired,
+  }
+
   render() {
 
     const lastMessage = this.props.conversation.messages[0]
     let ago
     let message
-    if(lastMessage) {
+    if (lastMessage) {
       const createdAtTimestamp = new Date(lastMessage.createdAt).getTime()
       const nowTimestamp = new Date().getTime()
       ago = timeDifference(nowTimestamp, createdAtTimestamp)
       message = lastMessage.text.split('').length > 32 ?
         lastMessage.text.split('').splice(0,32).join('') + '...' :
         lastMessage.text
-    }
-    else {
+    } else {
       ago = ''
       message = 'Start a new conversation'
     }
@@ -48,8 +52,3 @@ class ConversationItem extends Component {
 }
 
 export default ConversationItem
-
-ConversationItem.propTypes = {
-  conversation: React.PropTypes.any.isRequired,
-  onSelectConversation: React.PropTypes.func.isRequired,
-}

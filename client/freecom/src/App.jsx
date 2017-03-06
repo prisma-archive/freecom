@@ -14,69 +14,69 @@ const FREECOM_CUSTOMER_ID_KEY = 'FREECOM_CUSTOMER_ID'
 const FREECOM_CUSTOMER_NAME_KEY = 'FREECOM_CUSTOMER_NAME'
 
 const createCustomer = gql`
-    mutation createCustomer($name: String!) {
-        createCustomer(name: $name) {
-            id
-            name
-        }
+  mutation createCustomer($name: String!) {
+    createCustomer(name: $name) {
+      id
+      name
     }
+  }
 `
 
 const createCustomerAndConversation = gql`
-    mutation createCustomer($name: String!, $slackChannelName: String!) {
-        createCustomer(name: $name, conversations: [{
-          slackChannelName: $slackChannelName,
-        }]) {
-            id
-            conversations {
-                id
-                updatedAt
-                slackChannelName
-            }
-        }
+  mutation createCustomer($name: String!, $slackChannelName: String!) {
+    createCustomer(name: $name, conversations: [{
+    slackChannelName: $slackChannelName,
+    }]) {
+      id
+      conversations {
+        id
+        updatedAt
+        slackChannelName
+      }
     }
+  }
 `
 
 const findConversations = gql`
-    query allConversations($customerId: ID!) {
-        allConversations(filter: {
-          customer: {
-            id: $customerId
-          }
-        }){
-            id
-            updatedAt
-            slackChannelName
-            agent {
-                id
-                slackUserName
-            }
-            messages(last: 1) {
-                id
-                text
-                createdAt
-            }
-        }
+  query allConversations($customerId: ID!) {
+    allConversations(filter: {
+      customer: {
+        id: $customerId
+      }
+    }){
+      id
+      updatedAt
+      slackChannelName
+      agent {
+        id
+        slackUserName
+      }
+      messages(last: 1) {
+        id
+        text
+        createdAt
+      }
     }
+  }
 `
 
 const createConversation = gql`
-    mutation createConversation($customerId: ID!, $slackChannelName: String!) {
-        createConversation(customerId: $customerId, slackChannelName: $slackChannelName) {
-            id
-            updatedAt
-            slackChannelName
-            agent {
-                id
-                slackUserName
-            }
-            messages(last: 1) {
-                id
-                text
-                createdAt
-            }
-        }
+  mutation createConversation($customerId: ID!, $slackChannelName: String!) {
+    createConversation(customerId: $customerId, slackChannelName: $slackChannelName) {
+      id
+      updatedAt
+      slackChannelName
+      agent {
+        id
+        slackUserName
+      }
+      messages(last: 1) {
+        id
+        text
+        createdAt
+      }
     }
+  }
 `
 
 
@@ -144,7 +144,7 @@ class App extends Component {
           !conversationExists ?
             Boolean(this.state.conversations) &&
             this._conversationsList(panelStyles)
-          :
+            :
             customerExists &&
             this._chat(panelStyles, customerId)
         }

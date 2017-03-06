@@ -4,6 +4,10 @@ import ConversationItem from './ConversationItem'
 
 class ConversationsList extends Component {
 
+  static propTypes = {
+    onSelectConversation: React.PropTypes.func.isRequired,
+  }
+
   render() {
     return (
       <div className='conversation-list'>
@@ -22,7 +26,3 @@ class ConversationsList extends Component {
 }
 
 export default ConversationsList
-
-ConversationsList.propTypes = {
-  onSelectConversation: React.PropTypes.func.isRequired,
-}

@@ -4,6 +4,10 @@ import './App.css'
 
 class ConversationsListHeader extends Component {
 
+  static propTypes = {
+    togglePanel: React.PropTypes.func.isRequired,
+  }
+
   render() {
     return (
       <div className='header header-padding'>
@@ -20,7 +24,3 @@ class ConversationsListHeader extends Component {
 }
 
 export default ConversationsListHeader
-
-ConversationsListHeader.propTypes = {
-  togglePanel: React.PropTypes.func.isRequired,
-}
