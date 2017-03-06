@@ -27,6 +27,7 @@ module.exports = (params, callback) => {
   const message = params.kwargs['text']
   const slackChannelName = params.kwargs['channel_name']
   const slackUserId = params.kwargs['user_id']
+  const slackUserName = params.kwargs['user_name']
 
   client.query(`
     {
@@ -49,48 +50,86 @@ module.exports = (params, callback) => {
 
     const conversation = response.allConversations[0]
     const conversationId = conversation.id
-    const agentId = response.allAgents[0].id
 
-    const needToUpdateAgentInConversation = conversation.agent ?  (agentId !== conversation.agent.id) : true
+    if (response.allAgents.length > 0) {
 
-    const mutationWithoutUpdatingAgent = `
-    {
-      createMessage(text: "${message}", conversationId: "${conversationId}", agentId: "${agentId}") {
-        id
-      }
-    }
-    `
+      const agentId = response.allAgents[0].id
+      const needToUpdateAgentInConversation = conversation.agent ?  (agentId !== conversation.agent.id) : true
 
-    const mutationWitUpdatingAgent = `
-    {
-      createMessage(text: "${message}", conversationId: "${conversationId}", agentId: "${agentId}") {
-        id
-      }
-      updateConversation(id: "${conversationId}", agentId: "${agentId}") {
-        id
-      }
-    }
-    `
-
-    const createMessageMutation = needToUpdateAgentInConversation ? mutationWitUpdatingAgent : mutationWithoutUpdatingAgent
-
-    client.mutate(createMessageMutation)
-      .then(() => {
-        let response = 'Posted message to Graphcool:  \'' + message + '\' (conversation:  ' + conversationId + ')'
-        if (needToUpdateAgentInConversation) {
-          response = response + '\n: Also updated the agent in the conversation: ' + agentId
+      const mutationWithoutUpdatingAgent = `
+      {
+        createMessage(text: "${message}", conversationId: "${conversationId}", agentId: "${agentId}") {
+          id
         }
-        return callback(null, response)
-    }).catch(error => {
-        console.error('ERROR: ', error)
-        return callback(error, 'Could not post message to Graphcool!  ' + responseString)
-    })
-  }).catch(error => {
-    console.error('ERROR: ', error)
-    return callback(error, 'Could not query conversations!')
+      }
+      `
 
+      const mutationWitUpdatingAgent = `
+      {
+        createMessage(text: "${message}", conversationId: "${conversationId}", agentId: "${agentId}") {
+          id
+        }
+        updateConversation(id: "${conversationId}", agentId: "${agentId}") {
+          id
+        }
+      }
+      `
+      const createMessageMutation = needToUpdateAgentInConversation ?
+        mutationWitUpdatingAgent : mutationWithoutUpdatingAgent
+
+      client.mutate(createMessageMutation)
+        .then(() => {
+          let response = 'Posted message to Graphcool:  \'' + message + '\' (conversation:  ' + conversationId + ')'
+          if (needToUpdateAgentInConversation) {
+            response = response + '\n: Also updated the agent in the conversation: ' + agentId
+          }
+          return callback(null, response)
+        }).catch(error => {
+        return callback(error, 'Could not post message to Graphcool!  ' + responseString)
+      })
+
+    }
+    else {
+
+      client.mutate(`
+        {
+          updateConversation(id: "${conversationId}", agent: {
+            slackUserId: "${slackUserId}",
+            slackUserName: "${slackUserName}",
+          }) {
+            id
+            agent {
+              id
+            }
+          }
+        }
+      `).then(response => {
+        const agentId = response.updateConversation.agent.id
+        client.mutate(`
+          {
+            createMessage(text: "${message}", conversationId: "${conversationId}", agentId: "${agentId}") {
+              id
+            }
+          }
+        `).then(() => {
+          let response = 'Posted message to Graphcool:  \'' + message + '\' (conversation:  ' + conversationId + ')'
+          response = response + '\n: Also created new agent in the conversation: ' + agentId
+          return callback(null, response)
+
+        }).catch(error => {
+          return callback(error, 'Could not post message to Graphcool!  ' + responseString)
+        })
+
+      }).catch(error => {
+        return callback(error, 'Could not create new agent!  ' + responseString)
+      })
+    }
+
+
+  }).catch(error => {
+    return callback(error, 'Could not query conversations!')
   })
-  
+
 }
 
 
