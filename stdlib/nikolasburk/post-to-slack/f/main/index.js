@@ -34,12 +34,10 @@ module.exports = (params, callback) => {
       },
       method: 'GET',
   })
-  .then(response => { 
-    console.log(response) 
+  .then(response => {
     return callback(null, 'Posted message to Slack!\n\n' + slackURL)
   })
-  .catch(error => { 
-    console.error(error)
+  .catch(error => {
     return callback(error, null)
   })
 

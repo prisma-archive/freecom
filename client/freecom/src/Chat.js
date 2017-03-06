@@ -144,7 +144,6 @@ class Chat extends Component {
         disableClick={true}
       >
         <div className='message-body overflow-scroll'>
-
           <ChatMessages
             messages={this.props.allMessagesQuery.allMessages || []}
           />

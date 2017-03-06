@@ -41,14 +41,14 @@ const findConversations = gql`
             id
             updatedAt
             slackChannelName
+            agent {
+                id
+                slackUserName
+            }
             messages(last: 1) {
                 id
                 text
                 createdAt
-                agent {
-                    id
-                    slackUserName
-                }
             }
         }
     }
