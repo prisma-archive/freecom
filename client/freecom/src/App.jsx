@@ -63,6 +63,16 @@ const createConversation = gql`
         createConversation(customerId: $customerId, slackChannelName: $slackChannelName) {
             id
             updatedAt
+            slackChannelName
+            agent {
+                id
+                slackUserName
+            }
+            messages(last: 1) {
+                id
+                text
+                createdAt
+            }
         }
     }
 `
@@ -73,7 +83,7 @@ const FREECOM_CUSTOMER_NAME_KEY = 'FREECOM_CUSTOMER_NAME'
 class App extends Component {
 
   state = {
-    conversationId: null,
+    selectedConversationId: null,
     conversations: [],
     displayState: 'CONVERSATIONS', // 'CONVERSATIONS' or 'CHAT'
     isOpen: true,
@@ -122,61 +132,84 @@ class App extends Component {
 
     const customerId = localStorage.getItem(FREECOM_CUSTOMER_ID_KEY)
     const customerExists = Boolean(customerId)
-    const conversationExists = Boolean(this.state.conversationId)
+    const conversationExists = Boolean(this.state.selectedConversationId)
     const panelStyles = cx('panel drop-shadow radius overflow-hidden', {
       'hide': !this.state.isOpen,
       'fadeInUp':this.state.isOpen,
     })
 
-    console.log('App - render - ', customerId, this.state.conversationId)
+    console.log('App - render - ', customerId, this.state.selectedConversationId)
 
     return (
       <div className='App'>
-        {!conversationExists ?
-          Boolean(this.state.conversations) &&
-          <div>
-            <div className="container">
-              <div className={panelStyles}>
-                <ConversationsListHeader
-                  togglePanel={this._togglePanel}
-                />
-                <div className="body overflow-scroll">
-                  <ConversationsList
-                    conversations={this.state.conversations}
-                    onSelectConversation={this._onSelectConversation}
-                  />
-                  <div className="flex flex-hcenter full-width conversation-button-wrapper pointer-events-none">
-                    <div
-                      className="conversation-button background-darkgray drop-shadow-hover pointer flex-center flex pointer-events-initial"
-                      onClick={() => this._createNewConversation()}
-                    >
-                      <p>New Conversation</p>
-                    </div>
-                  </div>
+        {
+          !conversationExists ?
+            Boolean(this.state.conversations) &&
+            this._conversationsList(panelStyles)
+          :
+            customerExists &&
+            this._chat(panelStyles, customerId)
+        }
+      </div>
+    )
+  }
+
+  _conversationsList = (panelStyles) => {
+    return (
+      <div>
+        <div className='container'>
+          <div className={panelStyles}>
+            <ConversationsListHeader
+              togglePanel={this._togglePanel}
+            />
+            <div className='body overflow-scroll'>
+              <ConversationsList
+                conversations={this.state.conversations}
+                onSelectConversation={this._onSelectConversation}
+              />
+              <div className='flex flex-hcenter full-width conversation-button-wrapper pointer-events-none'>
+                <div
+                  className='conversation-button background-darkgray drop-shadow-hover pointer flex-center flex pointer-events-initial'
+                  onClick={() => this._createNewConversation()}
+                >
+                  <p>New Conversation</p>
                 </div>
               </div>
-              <div className="button drop-shadow-hover pointer" onClick={() => this._togglePanel()}></div>
             </div>
           </div>
-          :
-          customerExists &&
-          <div>
-            <div className="container">
-              <div className={panelStyles}>
-                <ChatHeader
-                  agentName={'TEST'}
-                  resetConversation={this._resetConversation}
-                />
-                <Chat
-                  conversationId={this.state.conversationId}
-                  customerId={customerId}
-                  resetConversation={this._resetConversation}
-                />
-              </div>
-              <div className="button pointer drop-shadow-hover" onClick={() => this._togglePanel()}></div>
-            </div>
+          <div
+            className='button drop-shadow-hover pointer'
+            onClick={() => this._togglePanel()}
+          />
+        </div>
+      </div>
+    )
+  }
+
+  _chat = (panelStyles, customerId) => {
+
+    const selectedConversation = this.state.conversations.find(conversation => {
+      return conversation.id === this.state.selectedConversationId
+    })
+
+    const agentName = selectedConversation.agent ? selectedConversation.agent.slackUserName : global['Freecom'].companyName
+
+    return (
+      <div>
+        <div className='container'>
+          <div className={panelStyles}>
+            <ChatHeader
+              agentName={agentName}
+              resetConversation={this._resetConversation}
+            />
+            <Chat
+              conversationId={this.state.selectedConversationId}
+              customerId={customerId}
+              resetConversation={this._resetConversation}
+            />
           </div>
-        }
+          <div className='button pointer drop-shadow-hover' onClick={() => this._togglePanel()}></div>
+        </div>
       </div>
     )
   }
@@ -200,7 +233,7 @@ class App extends Component {
       const maxPosition = Math.max.apply(null, channelPositions)
       newChannelPosition = maxPosition + 1
     }
-    const newChannelName = username + '-' + newChannelPosition
+    const newChannelName = (username + '-' + newChannelPosition).toLowerCase()
 
     // create new conversation for the customer
     console.log('Create conversation for existing customer: ', customerId, newChannelName)
@@ -211,19 +244,23 @@ class App extends Component {
       }
     })
     const conversationId = result.data.createConversation.id
-    this.setState({conversationId})
+    const newConversations = this.state.conversations.concat([result.data.createConversation])
+    this.setState({
+      conversations: newConversations,
+      selectedConversationId: conversationId,
+    })
   }
 
   _onSelectConversation = (conversation) => {
     console.log('Selected conversation: ', conversation)
     this.setState({
-      conversationId: conversation.id,
+      selectedConversationId: conversation.id,
     })
   }
 
   _resetConversation = () => {
     this.setState({
-      conversationId: null,
+      selectedConversationId: null,
     })
   }
 
@@ -236,6 +273,7 @@ class App extends Component {
     const usernameWithoutSpace = username.replace(' ', '-')
     return usernameWithoutSpace
   }
+
 }
 
 const appWithMutations = compose(

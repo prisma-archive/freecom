@@ -40,6 +40,7 @@
 .pointer-events-initial { pointer-events: initial; }
 .hover-gray:hover { background-color: #f6f7f9; }
 .background-gray {  background-color: #edf1f4; }
+.background-blue {  background-color: #00BCD4; }
 .background-darkgray { background-color: #8196b2; }
 .background-white { background-color: white; }
 .white { color: white; }
@@ -114,16 +115,11 @@
 }
 
 .avatar {
-<<<<<<< HEAD
-    width: 40px;
-    height: 40px;
-=======
     position: relative;
     width: 40px;
     min-width: 40px;
     height: 40px;
     min-height: 40px;
->>>>>>> e8a400b764255ab03d4ea6d09d7a4c9691c51db0
     margin-right: 10px;
     border-radius: 50%;
     background: url(https://unsplash.it/100) no-repeat;

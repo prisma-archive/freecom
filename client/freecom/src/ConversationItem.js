@@ -13,23 +13,30 @@ class ConversationItem extends Component {
       const createdAtTimestamp = new Date(lastMessage.createdAt).getTime()
       const nowTimestamp = new Date().getTime()
       ago = timeDifference(nowTimestamp, createdAtTimestamp)
-      message = lastMessage.text.split('').length > 32 ? lastMessage.text.split('').splice(0,32).join('') + '...' : lastMessage.text
+      message = lastMessage.text.split('').length > 32 ?
+        lastMessage.text.split('').splice(0,32).join('') + '...' :
+        lastMessage.text
     }
     else {
       ago = ''
       message = 'Start a new conversation'
     }
     console.log(this.props.conversation)
+
+    const chatPartnerName = this.props.conversation.agent ?
+      this.props.conversation.agent.slackUserName :
+      global['Freecom'].companyName
+
     return (
       <div
         className='conversation interior-padding fadeInLeft pointer hover-gray'
         onClick={() => this.props.onSelectConversation(this.props.conversation)}
       >
-        <div className="flex">
-          <div className="avatar"></div>
+        <div className='flex'>
+          <div className='avatar'></div>
           <div className='conversation-text-padding full-width'>
-            <div className="flex">
-              <p className='full-width opacity-6'>Name here</p>
+            <div className='flex'>
+              <p className='full-width opacity-6'>{chatPartnerName}</p>
               <p className='opaque conversation-ago'>{ago}</p>
             </div>
             <p className='full-width opacity-8'>{message}</p>

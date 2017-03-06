@@ -10,13 +10,12 @@ class ChatMessage extends Component {
     const nowTimestamp = new Date().getTime()
     const ago = timeDifference(nowTimestamp, createdAtTimestamp)
 
-    const messagePrefix = Boolean(this.props.sentByAgent) ? this.props.sentByAgent.slackUserName + ': ' : 'You: '
-
     return (
     <div className='fadeInLeft'>
+
       <div style={{display: this.props.sentByAgent ? 'visible' : 'none'}} className='message-padding'>
         <div className='flex flex-bottom'>
-          <div className="avatar message-avatar"></div>
+          <div className='avatar message-avatar'></div>
           <div className='message-container message-container-padding-left'>
             <div className='opaque background-gray padding-20 radius opaque'>
               <p>{this.props.message}</p>
@@ -29,7 +28,7 @@ class ChatMessage extends Component {
       <div style={{display: !this.props.sentByAgent ? 'visible' : 'none'}} className='message-padding'>
         <div className='flex flex-bottom'>
           <div className='message-container message-container-padding-right flex-right'>
-            <div className='opaque background-gray padding-20 radius opaque'>
+            <div className='opaque background-blue white padding-20 radius opaque'>
               <p>{this.props.message}</p>
             </div>
             <p className='right opacity-4'>{ago}</p>
