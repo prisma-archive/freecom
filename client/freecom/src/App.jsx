@@ -10,6 +10,8 @@ import gql from 'graphql-tag'
 import generateStupidName from 'sillyname'
 
 const TEST_WITH_NEW_CUSTOMER = false
+const FREECOM_CUSTOMER_ID_KEY = 'FREECOM_CUSTOMER_ID'
+const FREECOM_CUSTOMER_NAME_KEY = 'FREECOM_CUSTOMER_NAME'
 
 const createCustomer = gql`
     mutation createCustomer($name: String!) {
@@ -23,7 +25,7 @@ const createCustomer = gql`
 const createCustomerAndConversation = gql`
     mutation createCustomer($name: String!, $slackChannelName: String!) {
         createCustomer(name: $name, conversations: [{
-        slackChannelName: $slackChannelName,
+          slackChannelName: $slackChannelName,
         }]) {
             id
             conversations {
@@ -77,8 +79,6 @@ const createConversation = gql`
     }
 `
 
-const FREECOM_CUSTOMER_ID_KEY = 'FREECOM_CUSTOMER_ID'
-const FREECOM_CUSTOMER_NAME_KEY = 'FREECOM_CUSTOMER_NAME'
 
 class App extends Component {
 
@@ -138,8 +138,6 @@ class App extends Component {
       'fadeInUp':this.state.isOpen,
     })
 
-    console.log('App - render - ', customerId, this.state.selectedConversationId)
-
     return (
       <div className='App'>
         {
@@ -170,7 +168,7 @@ class App extends Component {
               <div className='flex flex-hcenter full-width conversation-button-wrapper pointer-events-none'>
                 <div
                   className='conversation-button background-darkgray drop-shadow-hover pointer flex-center flex pointer-events-initial'
-                  onClick={() => this._createNewConversation()}
+                  onClick={() => this._initiateNewConversation()}
                 >
                   <p>New Conversation</p>
                 </div>
@@ -192,14 +190,15 @@ class App extends Component {
       return conversation.id === this.state.selectedConversationId
     })
 
-    const agentName = selectedConversation.agent ? selectedConversation.agent.slackUserName : global['Freecom'].companyName
+    const chatPartnerName = selectedConversation.agent ?
+      selectedConversation.agent.slackUserName : global['Freecom'].companyName
 
     return (
       <div>
         <div className='container'>
           <div className={panelStyles}>
             <ChatHeader
-              agentName={agentName}
+              chatPartnerName={chatPartnerName}
               resetConversation={this._resetConversation}
             />
             <Chat
@@ -216,12 +215,26 @@ class App extends Component {
 
   _togglePanel = () => this.setState({isOpen: !this.state.isOpen})
 
-  _createNewConversation = async () => {
+  _initiateNewConversation = () => {
 
     const customerId = localStorage.getItem(FREECOM_CUSTOMER_ID_KEY)
     const username = localStorage.getItem(FREECOM_CUSTOMER_NAME_KEY)
 
-    console.log('Create new conversation')
+    const emptyConversation = this.state.conversations.find(conversation => {
+      return conversation.messages.length === 0
+    })
+
+    if (Boolean(emptyConversation)) {
+      this.setState({selectedConversationId: emptyConversation.id})
+    }
+    else {
+      this._createNewConversation(customerId, username)
+    }
+  }
+
+  _createNewConversation = async (customerId, username) => {
+
+    console.debug('Create new conversation')
     // find channel with greatest position appended as suffix
     const channelPositions = this.state.conversations.map(conversation => {
       const slackChannelNameComponents = conversation.slackChannelName.split('-')
@@ -236,7 +249,7 @@ class App extends Component {
     const newChannelName = (username + '-' + newChannelPosition).toLowerCase()
 
     // create new conversation for the customer
-    console.log('Create conversation for existing customer: ', customerId, newChannelName)
+    console.debug('Create conversation for existing customer: ', customerId, newChannelName)
     const result = await this.props.createConversationMutation({
       variables: {
         customerId: customerId,
@@ -252,7 +265,7 @@ class App extends Component {
   }
 
   _onSelectConversation = (conversation) => {
-    console.log('Selected conversation: ', conversation)
+    console.debug('Selected conversation: ', conversation)
     this.setState({
       selectedConversationId: conversation.id,
     })

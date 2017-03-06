@@ -11,7 +11,7 @@ class ChatHeader extends Component {
         <div className='padding-10 flex'>
           <div className='avatar fadeInLeft'></div>
           <div className='fadeInLeft gutter-left'>
-            {this.props.agentName}
+            {this.props.chatPartnerName}
             <p className='fadeInLeft opaque'>Last time active</p>
           </div>
         </div>
@@ -23,3 +23,8 @@ class ChatHeader extends Component {
 }
 
 export default ChatHeader
+
+ChatHeader.propTypes = {
+  resetConversation: React.PropTypes.func.isRequired,
+  chatPartnerName: React.PropTypes.string.isRequired,
+};

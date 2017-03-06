@@ -6,18 +6,6 @@ import { graphql, compose } from 'react-apollo'
 import gql from 'graphql-tag'
 import Dropzone from 'react-dropzone'
 
-// const findConversations = gql`
-//     query allConversations($customerId: ID!) {
-//         allConversations(filter: {
-//         customer: {
-//           id: $customerId
-//         } }){
-//             id
-//             slackChannelName
-//         }
-//     }
-// `
-
 const createMessage = gql`
     mutation createMessage($text: String!, $conversationId: ID!) {
         createMessage(text: $text, conversationId: $conversationId) {
@@ -62,7 +50,6 @@ class Chat extends Component {
   }
 
   componentDidMount() {
-
     this.newMessageSubscription = this.props.allMessagesQuery.subscribeToMore({
       document: gql`
           subscription {
@@ -90,7 +77,7 @@ class Chat extends Component {
           }
       `,
       updateQuery: (previousState, {subscriptionData}) => {
-        console.log('Subscription received: ', previousState, subscriptionData)
+        console.debug('Subscription received: ', previousState, subscriptionData)
         const newMessage = subscriptionData.data.Message.node
         const messages = previousState.allMessages ? previousState.allMessages.concat([newMessage]) : [newMessage]
         return {
@@ -135,7 +122,7 @@ class Chat extends Component {
   }
 
   _onSend = () => {
-    console.log('Send message: ', this.state.message, this.props.conversationId, this.props.createMessageMutation)
+    console.debug('Send message: ', this.state.message, this.props.conversationId, this.props.createMessageMutation)
     // this.props.createMessageMutation({
     //   variables: {
     //     text: this.state.message,
@@ -146,8 +133,8 @@ class Chat extends Component {
   }
 
   _onFileDrop = (acceptedFiles, rejectedFiles) => {
-    console.log('Accepted files: ', acceptedFiles)
-    console.log('Rejected files: ', rejectedFiles)
+    console.debug('Accepted files: ', acceptedFiles)
+    console.debug('Rejected files: ', rejectedFiles)
 
     // prepare form data, use data key!
     let data = new FormData()
@@ -178,14 +165,14 @@ class Chat extends Component {
 
 const ChatWithAllMessages = graphql(allMessages, {name: 'allMessagesQuery'})(Chat)
 export default graphql(createMessage, {
-   props({ownProps, mutate}) {
+  props({ownProps, mutate}) {
     return {
       createMessageMutation(text, conversationId) {
         return mutate({
           variables: { text, conversationId },
           updateQueries: {
             allConversations: (previousState, {mutationResult}) => {
-              console.log('Chat - did send mutation for allConversationsQuery: ', previousState, mutationResult)
+              console.debug('Chat - did send mutation for allConversationsQuery: ', previousState, mutationResult)
               return previousState
             }
           }
@@ -194,6 +181,11 @@ export default graphql(createMessage, {
     }
   }
 })(ChatWithAllMessages)
+
+Chat.PropTypes = {
+  conversationId: React.PropTypes.string.isRequired,
+  allMessagesQuery: React.PropTypes.any.isRequired,
+}
 
 // export default compose(
 //   // graphql(findConversations, {name: 'findConversationsQuery'}),

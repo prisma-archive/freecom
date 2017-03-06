@@ -4,7 +4,7 @@ import App from './App'
 import './index.css'
 import ApolloClient, { createNetworkInterface } from 'apollo-client'
 import { ApolloProvider } from 'react-apollo'
-import {SubscriptionClient, addGraphQLSubscriptions} from 'subscriptions-transport-ws'
+import { SubscriptionClient, addGraphQLSubscriptions } from 'subscriptions-transport-ws'
 
 // Create WebSocket client
 const wsClient = new SubscriptionClient(`wss://subscriptions.graph.cool/v1/cizf8g3fr1sp90139ikdjayb7`, {

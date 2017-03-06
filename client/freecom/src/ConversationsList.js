@@ -24,5 +24,5 @@ class ConversationsList extends Component {
 export default ConversationsList
 
 ConversationsList.propTypes = {
-
+  onSelectConversation: React.PropTypes.func.isRequired,
 }

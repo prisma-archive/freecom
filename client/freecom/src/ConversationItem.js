@@ -1,6 +1,6 @@
 import React, { Component} from 'react'
 import './ConversationItem.css'
-import {timeDifference} from './utils'
+import { timeDifference } from './utils'
 
 class ConversationItem extends Component {
 
@@ -21,7 +21,6 @@ class ConversationItem extends Component {
       ago = ''
       message = 'Start a new conversation'
     }
-    console.log(this.props.conversation)
 
     const chatPartnerName = this.props.conversation.agent ?
       this.props.conversation.agent.slackUserName :
@@ -51,5 +50,6 @@ class ConversationItem extends Component {
 export default ConversationItem
 
 ConversationItem.propTypes = {
-
+  conversation: React.PropTypes.any.isRequired,
+  onSelectConversation: React.PropTypes.func.isRequired,
 }

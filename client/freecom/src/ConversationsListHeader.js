@@ -20,3 +20,7 @@ class ConversationsListHeader extends Component {
 }
 
 export default ConversationsListHeader
+
+ConversationsListHeader.propTypes = {
+  togglePanel: React.PropTypes.func.isRequired,
+}

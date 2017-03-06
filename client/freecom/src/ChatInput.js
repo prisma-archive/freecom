@@ -45,4 +45,5 @@ ChatInput.propTypes = {
   onTextInput: React.PropTypes.func.isRequired,
   onResetText: React.PropTypes.func.isRequired,
   onSend: React.PropTypes.func.isRequired,
+  onDrop: React.PropTypes.func.isRequired,
 }

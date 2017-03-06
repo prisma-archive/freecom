@@ -24,5 +24,5 @@ class ChatMessages extends Component {
 export default ChatMessages
 
 ChatMessages.propTypes = {
-
+  messages: React.PropTypes.array.isRequired,
 }
