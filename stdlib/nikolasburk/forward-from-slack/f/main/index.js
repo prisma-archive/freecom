@@ -1,4 +1,3 @@
-/* Import dependencies, declare constants */
 require('isomorphic-fetch')
 const Lokka = require('lokka').Lokka
 const Transport = require('lokka-transport-http').Transport

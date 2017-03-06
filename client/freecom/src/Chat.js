@@ -7,39 +7,39 @@ import gql from 'graphql-tag'
 import Dropzone from 'react-dropzone'
 
 const createMessage = gql`
-    mutation createMessage($text: String!, $conversationId: ID!) {
-        createMessage(text: $text, conversationId: $conversationId) {
-            id
-            text
-            createdAt
-            agent {
-                id
-                slackUserName
-            }
-            conversation {
-                id
-            }
-        }
+  mutation createMessage($text: String!, $conversationId: ID!) {
+    createMessage(text: $text, conversationId: $conversationId) {
+      id
+      text
+      createdAt
+      agent {
+        id
+        slackUserName
+      }
+      conversation {
+        id
+      }
     }
+  }
 `
 
 const allMessages = gql`
-    query allMessages($conversationId: ID!) {
-        allMessages(filter: {
-          conversation: {
-            id: $conversationId
-          }
-        })
-        {
-            id
-            text
-            createdAt
-            agent {
-                id
-                slackUserName
-            }
-        }
+  query allMessages($conversationId: ID!) {
+    allMessages(filter: {
+      conversation: {
+        id: $conversationId
+      }
+    })
+    {
+      id
+      text
+      createdAt
+      agent {
+        id
+        slackUserName
+      }
     }
+  }
 `
 
 class Chat extends Component {
@@ -57,29 +57,29 @@ class Chat extends Component {
   componentDidMount() {
     this.newMessageSubscription = this.props.allMessagesQuery.subscribeToMore({
       document: gql`
-          subscription {
-              Message(filter: {
-              AND: [{
+        subscription {
+          Message(filter: {
+            AND: [{
               mutation_in: [CREATED]
-              }, {
+            }, {
               node: {
-              conversation: {
-              id: "${this.props.conversationId}"
+                conversation: {
+                  id: "${this.props.conversationId}"
+                }
               }
+            }]
+          }) {
+            node {
+              id
+              text
+              createdAt
+              agent {
+                id
+                slackUserName
               }
-              }]
-              }) {
-                  node {
-                      id
-                      text
-                      createdAt
-                      agent {
-                          id
-                          slackUserName
-                      }
-                  }
-              }
+            }
           }
+        }
       `,
       updateQuery: (previousState, {subscriptionData}) => {
         console.debug('Subscription received: ', previousState, subscriptionData)
