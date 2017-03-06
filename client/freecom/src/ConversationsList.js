@@ -12,7 +12,7 @@ class ConversationsList extends Component {
     return (
       <div className='conversation-list'>
         {this.props.conversations.map((conversation, i) => {
-          return (<ConversationItem
+          return (conversation.messages.length > 0 && <ConversationItem
             key={i}
             conversation={conversation}
             onSelectConversation={this.props.onSelectConversation}
