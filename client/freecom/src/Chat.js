@@ -42,22 +42,17 @@ const allMessages = gql`
   }
 `
 
-const INITIAL_SECONDS_UNTIL_RERENDER = 2
-
 class Chat extends Component {
-
-  _timer = null
 
   static propTypes = {
     conversationId: React.PropTypes.string.isRequired,
     allMessagesQuery: React.PropTypes.any.isRequired,
-    updateLastMessage: React.PropTypes.func.isRequired,
+    // updateLastMessage: React.PropTypes.func.isRequired,
   }
 
   state = {
     message: '',
     isUploadingImage: false,
-    secondsUntilRerender: INITIAL_SECONDS_UNTIL_RERENDER,
   }
 
   componentDidMount() {
@@ -89,16 +84,7 @@ class Chat extends Component {
       `,
       updateQuery: (previousState, {subscriptionData}) => {
 
-        // side effects in updateQuery :(
-        this.props.updateLastMessage(this.props.conversationId, subscriptionData.data.Message.node)
-
-        clearTimeout(this._timer)
-        this.setState(
-          {secondsUntilRerender: INITIAL_SECONDS_UNTIL_RERENDER},
-          () => this._rerender()
-        )
-
-        console.debug('Message received: ', previousState, subscriptionData)
+        console.debug('Chat - Message received: ', previousState, subscriptionData)
         const newMessage = subscriptionData.data.Message.node
         const messages = previousState.allMessages ? previousState.allMessages.concat([newMessage]) : [newMessage]
         return {
@@ -108,12 +94,8 @@ class Chat extends Component {
       onError: (err) => console.error('An error occured while being subscribed: ', err),
     })
 
-    this._rerender()
   }
 
-  componentWillUnmount() {
-    clearTimeout(this._timer)
-  }
 
   componentDidUpdate(prevProps) {
     if (prevProps.allMessagesQuery.allMessages !== this.props.allMessagesQuery.allMessages && this.endRef) {
@@ -189,13 +171,6 @@ class Chat extends Component {
         conversationId: this.props.conversationId,
       }
     })
-  }
-
-  _rerender = () => {
-    this.setState(
-      { secondsUntilRerender: this.state.secondsUntilRerender * 2 },
-      () => this._timer = setTimeout(this._rerender, this.state.secondsUntilRerender * 1000)
-    )
   }
 
   _setEndRef = (element) => {

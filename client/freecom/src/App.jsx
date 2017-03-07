@@ -79,14 +79,18 @@ const createConversation = gql`
   }
 `
 
+const INITIAL_SECONDS_UNTIL_RERENDER = 2
 
 class App extends Component {
 
+  _timer = null
+
   state = {
+    isOpen: true,
     selectedConversationId: null,
     conversations: [],
     displayState: 'CONVERSATIONS', // 'CONVERSATIONS' or 'CHAT'
-    isOpen: true,
+    secondsUntilRerender: INITIAL_SECONDS_UNTIL_RERENDER,
   }
 
   async componentDidMount() {
@@ -97,55 +101,28 @@ class App extends Component {
       localStorage.removeItem(FREECOM_CUSTOMER_NAME_KEY)
     }
 
+    // retrieve customer data
     const customerId = localStorage.getItem(FREECOM_CUSTOMER_ID_KEY)
     const username = localStorage.getItem(FREECOM_CUSTOMER_NAME_KEY)
 
     if (Boolean(customerId) && Boolean(username)) {
       // customer already exists, find all conversations for that customer
-      const findConversationsResult = await this.props.client.query({
-        query: findConversations,
-        variables: {
-          customerId
-        }
-      })
-
-      console.log(findConversationsResult.data.allConversations)
-      const sortedConversations = findConversationsResult.data.allConversations.slice()
-      sortedConversations.sort((conversation1, conversation2) => {
-        const lastMessage1 = conversation1.messages[0]
-        const lastMessage2 = conversation2.messages[0]
-
-        if (!lastMessage1 || !lastMessage2) {
-          return 0
-        }
-
-        const date1 = new Date(lastMessage1.createdAt).getTime()
-        const date2 = new Date(lastMessage2.createdAt).getTime()
-        if (date1 > date2) {
-          return -1
-        }
-        if (date1 < date2) {
-          return 1
-        }
-        return 0
-      })
-
-      this.setState({conversations: sortedConversations})
-
+      this._loadConversations(customerId)
     }
     else {
       // customer doesn't exist yet, create customer and conversation
-      const username = this._generateShortStupidName()
-      const result = await this.props.createCustomerMutation({
-        variables: {
-          name: username,
-        }
-      })
-      const customerId = result.data.createCustomer.id
-      localStorage.setItem(FREECOM_CUSTOMER_ID_KEY, customerId)
-      localStorage.setItem(FREECOM_CUSTOMER_NAME_KEY, username)
+      this._setupNewCustomer()
     }
 
+    // subscribe to new messages
+    this._subscribeToNewMessages()
+
+    this._rerender()
+  }
+
+
+  componentWillUnmount() {
+    clearTimeout(this._timer)
   }
 
   render() {
@@ -225,13 +202,99 @@ class App extends Component {
               conversationId={this.state.selectedConversationId}
               customerId={customerId}
               resetConversation={this._resetConversation}
-              updateLastMessage={this._updateLastMessageInConversation}
             />
           </div>
           <div className='button pointer drop-shadow-hover' onClick={() => this._togglePanel()}></div>
         </div>
       </div>
     )
+  }
+
+  _subscribeToNewMessages = () => {
+    console.log('App - Subscribe to Messages')
+    this.newMessageObserver = this.props.client.subscribe({
+      query: gql`
+        subscription {
+        Message(filter: {
+          mutation_in: [CREATED]
+        }) {
+          node {
+            id
+            text
+            createdAt
+            conversation {
+              id
+              updatedAt
+              slackChannelName
+              agent {
+                id
+                slackUserName
+              }
+            }
+          }
+      }
+    }
+  `,
+    }).subscribe({
+        next: this._handleNewMessage,
+        error(error) {
+          console.error('Subscription callback with error: ', error)
+        },
+    })
+  }
+
+  _handleNewMessage = (data) => {
+
+    clearTimeout(this._timer)
+    this.setState(
+      {secondsUntilRerender: INITIAL_SECONDS_UNTIL_RERENDER},
+      () => this._rerender()
+    )
+
+    this._updateLastMessageInConversation(data.Message.node.conversation.id, data.Message.node)
+  }
+
+  _setupNewCustomer = async () => {
+    const username = this._generateShortStupidName()
+    const result = await this.props.createCustomerMutation({
+      variables: {
+        name: username,
+      }
+    })
+    const customerId = result.data.createCustomer.id
+    localStorage.setItem(FREECOM_CUSTOMER_ID_KEY, customerId)
+    localStorage.setItem(FREECOM_CUSTOMER_NAME_KEY, username)
+  }
+
+  _loadConversations = async (customerId) => {
+    const findConversationsResult = await this.props.client.query({
+      query: findConversations,
+      variables: {
+        customerId
+      }
+    })
+
+    const sortedConversations = findConversationsResult.data.allConversations.slice()
+    sortedConversations.sort((conversation1, conversation2) => {
+      const lastMessage1 = conversation1.messages[0]
+      const lastMessage2 = conversation2.messages[0]
+
+      if (!lastMessage1 || !lastMessage2) {
+        return 0
+      }
+
+      const date1 = new Date(lastMessage1.createdAt).getTime()
+      const date2 = new Date(lastMessage2.createdAt).getTime()
+      if (date1 > date2) {
+        return -1
+      }
+      if (date1 < date2) {
+        return 1
+      }
+      return 0
+    })
+
+    this.setState({conversations: sortedConversations})
   }
 
   _updateLastMessageInConversation = (conversationId, newLastMessage) => {
@@ -326,6 +389,12 @@ class App extends Component {
     return usernameWithoutSpace
   }
 
+  _rerender = () => {
+    this.setState(
+      { secondsUntilRerender: this.state.secondsUntilRerender * 2 },
+      () => this._timer = setTimeout(this._rerender, this.state.secondsUntilRerender * 1000)
+    )
+  }
 }
 
 const appWithMutations = compose(
