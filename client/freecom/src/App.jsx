@@ -101,7 +101,6 @@ class App extends Component {
     const username = localStorage.getItem(FREECOM_CUSTOMER_NAME_KEY)
 
     if (Boolean(customerId) && Boolean(username)) {
-
       // customer already exists, find all conversations for that customer
       const findConversationsResult = await this.props.client.query({
         query: findConversations,
@@ -110,7 +109,28 @@ class App extends Component {
         }
       })
 
-      this.setState({conversations: findConversationsResult.data.allConversations})
+      console.log(findConversationsResult.data.allConversations)
+      const sortedConversations = findConversationsResult.data.allConversations.slice()
+      sortedConversations.sort((conversation1, conversation2) => {
+        const lastMessage1 = conversation1.messages[0]
+        const lastMessage2 = conversation2.messages[0]
+
+        if (!lastMessage1 || !lastMessage2) {
+          return 0
+        }
+
+        const date1 = new Date(lastMessage1.createdAt).getTime()
+        const date2 = new Date(lastMessage2.createdAt).getTime()
+        if (date1 > date2) {
+          return -1
+        }
+        if (date1 < date2) {
+          return 1
+        }
+        return 0
+      })
+
+      this.setState({conversations: sortedConversations})
 
     }
     else {
@@ -223,7 +243,13 @@ class App extends Component {
       ...newConversations[indexOfConversationToUpdate],
       messages: [newLastMessage]
     }
-    newConversations[indexOfConversationToUpdate] = newConversation
+
+    // remove conversation
+    newConversations.splice(indexOfConversationToUpdate, 1)
+
+    // and insert it in first position
+    newConversations.splice(0, 0, newConversation)
+
     this.setState({conversations: newConversations})
   }
 

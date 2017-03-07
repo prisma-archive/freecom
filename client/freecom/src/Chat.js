@@ -89,10 +89,16 @@ class Chat extends Component {
       `,
       updateQuery: (previousState, {subscriptionData}) => {
 
+        // side effects in updateQuery :(
         this.props.updateLastMessage(this.props.conversationId, subscriptionData.data.Message.node)
-        this.setState({secondsUntilRerender: INITIAL_SECONDS_UNTIL_RERENDER})
 
-        console.debug('Subscription received: ', previousState, subscriptionData)
+        clearTimeout(this._timer)
+        this.setState(
+          {secondsUntilRerender: INITIAL_SECONDS_UNTIL_RERENDER},
+          () => this._rerender()
+        )
+
+        console.debug('Message received: ', previousState, subscriptionData)
         const newMessage = subscriptionData.data.Message.node
         const messages = previousState.allMessages ? previousState.allMessages.concat([newMessage]) : [newMessage]
         return {
