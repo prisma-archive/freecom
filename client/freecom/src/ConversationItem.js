@@ -36,7 +36,10 @@ class ConversationItem extends Component {
         onClick={() => this.props.onSelectConversation(this.props.conversation)}
       >
         <div className='flex'>
-          <div className='avatar'></div>
+          <img
+            src={global['Freecom'].companyLogoURL}
+            alt=''
+            className='avatar'></img>
           <div className='conversation-text-padding full-width'>
             <div className='flex'>
               <p className='full-width opacity-6'>{chatPartnerName}</p>

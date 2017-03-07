@@ -211,7 +211,6 @@ class App extends Component {
   }
 
   _subscribeToNewMessages = () => {
-    console.log('App - Subscribe to Messages')
     this.newMessageObserver = this.props.client.subscribe({
       query: gql`
         subscription {

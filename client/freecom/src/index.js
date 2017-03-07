@@ -48,7 +48,8 @@ function render(element) {
 
 const freecom = {
   render,
-  companyName: 'Graphcool'
+  companyName: 'Graphcool',
+  companyLogoURL: 'http://imgur.com/qPjLkW0.png'
 }
 
 global['Freecom'] = freecom

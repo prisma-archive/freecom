@@ -14,15 +14,25 @@ require('isomorphic-fetch')
 *   - {Error} error The error to show if function fails
 *   - {Any} returnValue JSON serializable (or Buffer) return value
 */
+
+const token = 'xoxp-143869968915-143869969027-147144818550-66059a896db494ecfd2afdee0f3f306b'
+
+// token for Freecom App installed in Freecom team https://api.slack.com/apps/A482PQPK5/install-on-team
+// const token = 'xoxp-143869968915-143869969027-150829470068-5b21b7e94f772711cfdfabb42357b909'
+
 module.exports = (params, callback) => {
 
   console.log('Execute function ...')
+
+  if (params.kwargs.createdNode.agent) {
+    return callback(null, 'Did not post to Slack since message was sent by Agent.')
+  }
 
   const text = params.kwargs.createdNode.text
   const slackChannelName = params.kwargs.createdNode.conversation.slackChannelName
   const username = params.kwargs.createdNode.conversation.customer.name
 
-  let slackURL = 'https://slack.com/api/chat.postMessage?token=xoxp-143869968915-143869969027-147144818550-66059a896db494ecfd2afdee0f3f306b'
+  let slackURL = 'https://slack.com/api/chat.postMessage?token=' + token
   slackURL = slackURL + '&' + 'channel=' + slackChannelName
   slackURL = slackURL + '&' + 'username=' + username
   slackURL = slackURL + '&' + 'text=' + text

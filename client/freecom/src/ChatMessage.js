@@ -21,7 +21,10 @@ class ChatMessage extends Component {
 
       <div style={{display: this.props.sentByAgent ? 'visible' : 'none'}} className='message-padding'>
         <div className='flex flex-bottom'>
-          <div className='avatar message-avatar'></div>
+          <img
+            src={global['Freecom'].companyLogoURL}
+            alt=''
+            className='avatar message-avatar'></img>
           <div className='message-container message-container-padding-left'>
             <div className='opaque background-gray padding-20 radius opaque'>
               <p>{this.props.message}</p>

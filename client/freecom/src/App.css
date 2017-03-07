@@ -122,10 +122,10 @@
     min-height: 40px;
     margin-right: 10px;
     border-radius: 50%;
-    background: url(https://unsplash.it/100) no-repeat;
     flex: 0 0 auto;
-    background-size: cover;
+    background-size: contain;
     background-position: center;
+    background-color: white;
 }
 
 .message-padding {

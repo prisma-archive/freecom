@@ -20,6 +20,12 @@ require('isomorphic-fetch')
 // where position is an integer that gets incremented with
 // each conversation started by this customer
 
+// personal token
+const token = 'xoxp-143869968915-143869969027-147144818550-66059a896db494ecfd2afdee0f3f306b'
+
+// token for Freecom App installed in Freecom team https://api.slack.com/apps/A482PQPK5/install-on-team
+// const token = 'xoxp-143869968915-143869969027-150829470068-5b21b7e94f772711cfdfabb42357b909'
+
 module.exports = (params, callback) => {
 
   // const conversationId = params.kwargs.createdNode.id
@@ -73,7 +79,8 @@ module.exports = (params, callback) => {
   // const jsonString = JSON.stringify(json)
 
   // then create new slack channel
-  fetch('https://slack.com/api/channels.create?token=xoxp-143869968915-143869969027-147144818550-66059a896db494ecfd2afdee0f3f306b&name=' + slackChannelName,
+  // fetch('https://slack.com/api/channels.create?token=xoxp-143869968915-143869969027-147144818550-66059a896db494ecfd2afdee0f3f306b&name=' + slackChannelName,
+  fetch('https://slack.com/api/channels.create?token=' + token + '&name=' + slackChannelName,
     {
       method: 'GET',
     })

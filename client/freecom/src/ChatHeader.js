@@ -14,7 +14,10 @@ class ChatHeader extends Component {
       <div className='header flex header-padding'>
         <div className='radius fadeInLeft back-button pointer' onClick={this.props.resetConversation}>{'<'}</div>
         <div className='padding-10 flex'>
-          <div className='avatar fadeInLeft'></div>
+          <img
+            src={global['Freecom'].companyLogoURL}
+            alt=''
+            className='avatar fadeInLeft'></img>
           <div className='fadeInLeft gutter-left'>
             {this.props.chatPartnerName}
             <p className='fadeInLeft opaque'>Last time active</p>
