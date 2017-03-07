@@ -6,6 +6,7 @@ class ChatMessages extends Component {
 
   static propTypes = {
     messages: React.PropTypes.array.isRequired,
+    setEndRef: React.PropTypes.func.isRequired,
   }
 
   render() {
@@ -19,6 +20,8 @@ class ChatMessages extends Component {
             sentByAgent={message.agent}
           />)
         })}
+        <div style={ {float:"left", clear: "both"} }
+             ref={el => { this.props.setEndRef(el) }}></div>
       </div>
     )
   }

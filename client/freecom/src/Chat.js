@@ -109,6 +109,12 @@ class Chat extends Component {
     clearTimeout(this._timer)
   }
 
+  componentDidUpdate(prevProps) {
+    if (prevProps.allMessagesQuery.allMessages !== this.props.allMessagesQuery.allMessages && this.endRef) {
+      this.endRef.scrollIntoView()
+    }
+  }
+
   render() {
 
     if (this.props.allMessagesQuery.loading) {
@@ -126,6 +132,7 @@ class Chat extends Component {
         <div className='message-body overflow-scroll'>
           <ChatMessages
             messages={this.props.allMessagesQuery.allMessages || []}
+            setEndRef={this._setEndRef}
           />
           {this.state.isUploadingImage &&
           <div className='UploadImageIndicator'>Uploading image ...</div>
@@ -183,6 +190,10 @@ class Chat extends Component {
       { secondsUntilRerender: this.state.secondsUntilRerender * 2 },
       () => this._timer = setTimeout(this._rerender, this.state.secondsUntilRerender * 1000)
     )
+  }
+
+  _setEndRef = (element) => {
+    this.endRef = element
   }
 }
 
