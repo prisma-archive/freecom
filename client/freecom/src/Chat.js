@@ -42,7 +42,11 @@ const allMessages = gql`
   }
 `
 
+const INITIAL_SECONDS_UNTIL_RERENDER = 2
+
 class Chat extends Component {
+
+  _timer = null
 
   static propTypes = {
     conversationId: React.PropTypes.string.isRequired,
@@ -53,6 +57,7 @@ class Chat extends Component {
   state = {
     message: '',
     isUploadingImage: false,
+    secondsUntilRerender: INITIAL_SECONDS_UNTIL_RERENDER,
   }
 
   componentDidMount() {
@@ -85,6 +90,7 @@ class Chat extends Component {
       updateQuery: (previousState, {subscriptionData}) => {
 
         this.props.updateLastMessage(this.props.conversationId, subscriptionData.data.Message.node)
+        this.setState({secondsUntilRerender: INITIAL_SECONDS_UNTIL_RERENDER})
 
         console.debug('Subscription received: ', previousState, subscriptionData)
         const newMessage = subscriptionData.data.Message.node
@@ -95,6 +101,12 @@ class Chat extends Component {
       },
       onError: (err) => console.error('An error occured while being subscribed: ', err),
     })
+
+    this._rerender()
+  }
+
+  componentWillUnmount() {
+    clearTimeout(this._timer)
   }
 
   render() {
@@ -164,60 +176,18 @@ class Chat extends Component {
         conversationId: this.props.conversationId,
       }
     })
-    // this.props.createMessageMutation('Uploaded image to URL: ' + json.url, this.props.conversationId)
   }
 
+  _rerender = () => {
+    this.setState(
+      { secondsUntilRerender: this.state.secondsUntilRerender * 2 },
+      () => this._timer = setTimeout(this._rerender, this.state.secondsUntilRerender * 1000)
+    )
+  }
 }
 
-// const ChatWithAllMessages = graphql(allMessages, {name: 'allMessagesQuery'})(Chat)
-// export default compose(
-//   findConversations,
-//   graphql(createMessage, {
-//     props({ownProps, mutate}) {
-//       return {
-//         createMessageMutation(text, conversationId) {
-//           return mutate({
-//             variables: { text, conversationId },
-//             updateQueries: {
-//               allConversations: (previousState, {mutationResult}) => {
-//                 const newLastMessage = mutationResult.data.createMessage
-//                 const newConversations = previousState.allConversations.slice()
-//                 const indexOfConversationToUpdate = newConversations.findIndex(conversation => {
-//                   return conversation.id === newLastMessage.conversation.id
-//                 })
-//                 newConversations[indexOfConversationToUpdate].messages[0] = newLastMessage
-//                 console.debug('Chat - did send mutation for allConversationsQuery: ', newConversations, previousState, mutationResult)
-//                 return {
-//                   allConversations: newConversations
-//                 }
-//               }
-//             }
-//           })
-//         }
-//       }
-//     }
-//   })
-// )(ChatWithAllMessages)
-// export default graphql(createMessage, {
-//   props({ownProps, mutate}) {
-//     return {
-//       createMessageMutation(text, conversationId) {
-//         return mutate({
-//           variables: { text, conversationId },
-//           updateQueries: {
-//             allConversations: (previousState, {mutationResult}) => {
-//               console.debug('Chat - did send mutation for allConversationsQuery: ', previousState, mutationResult)
-//               return previousState
-//             }
-//           }
-//         })
-//       }
-//     }
-//   }
-// })(ChatWithAllMessages)
 
 export default compose(
-  // graphql(findConversations, {name: 'findConversationsQuery'}),
   graphql(allMessages, {name: 'allMessagesQuery'}),
   graphql(createMessage, {name : 'createMessageMutation'})
 )(Chat)
