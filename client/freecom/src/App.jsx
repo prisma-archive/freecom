@@ -155,6 +155,7 @@ class App extends Component {
 
               </div>
               <div
+                style={{backgroundColor: global['Freecom'].mainColor}}
                 className={buttonStyles}
                 onClick={() => this._togglePanel()}
               >

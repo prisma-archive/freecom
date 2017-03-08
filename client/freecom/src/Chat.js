@@ -92,7 +92,7 @@ class Chat extends Component {
         const newMessage = subscriptionData.data.Message.node
         const messages = previousState.allMessages ? previousState.allMessages.concat([newMessage]) : [newMessage]
         return {
-          allMessa1ges: messages,
+          allMessages: messages,
         }
       },
       onError: (err) => console.error('An error occured while being subscribed: ', err),
