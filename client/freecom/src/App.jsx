@@ -8,6 +8,7 @@ import ConversationsListHeader from './ConversationsListHeader'
 import { graphql, compose, withApollo } from 'react-apollo'
 import gql from 'graphql-tag'
 import generateStupidName from 'sillyname'
+import { timeDifference } from './utils'
 
 const TEST_WITH_NEW_CUSTOMER = false
 const FREECOM_CUSTOMER_ID_KEY = 'FREECOM_CUSTOMER_ID'
@@ -204,11 +205,16 @@ class App extends Component {
       selectedConversation.agent.slackUserName : global['Freecom'].companyName
     const profileImageUrl = agent && agent.imageUrl ? agent.imageUrl : global['Freecom'].companyLogoURL
 
+    const now = new Date().getTime()
+    const updated = new Date(selectedConversation.updatedAt).getTime()
+    const created = timeDifference(now, updated)
+
     return (
       <span>
         <ChatHeader
           chatPartnerName={chatPartnerName}
           resetConversation={this._resetConversation}
+          created={created}
           profileImageUrl={profileImageUrl}
         />
         <Chat

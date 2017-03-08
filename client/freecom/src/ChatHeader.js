@@ -7,7 +7,8 @@ class ChatHeader extends Component {
   static propTypes = {
     resetConversation: React.PropTypes.func.isRequired,
     chatPartnerName: React.PropTypes.string.isRequired,
-    profileImageUrl: React.PropTypes.string.isRequired
+    profileImageUrl: React.PropTypes.string.isRequired,
+    created: React.PropTypes.string.isRequired,
   }
 
   render() {
@@ -28,7 +29,7 @@ class ChatHeader extends Component {
             className='avatar fadeInLeft'></img>
           <div className='fadeInLeft gutter-left conversation-title'>
             {this.props.chatPartnerName}
-            <p className='fadeInLeft text-opaque'>Last time active</p>
+            <p className='fadeInLeft text-opaque'>Created {this.props.created}</p>
           </div>
         </div>
       </div>
