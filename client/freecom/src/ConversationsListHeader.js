@@ -12,7 +12,7 @@ class ConversationsListHeader extends Component {
     return (
       <div
         style={{backgroundColor: global['Freecom'].mainColor}}
-        className='header header-padding'
+        className='header header-padding header-shadow'
       >
         <div className='conversation-header gutter-left'>
           <h3 className='fadeInLeft'>Conversations</h3>
