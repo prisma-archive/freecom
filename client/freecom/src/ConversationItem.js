@@ -30,6 +30,10 @@ class ConversationItem extends Component {
       this.props.conversation.agent.slackUserName :
       global['Freecom'].companyName
 
+    const profileImageUrl =  this.props.conversation.agent && this.props.conversation.agent.imageUrl ?
+      this.props.conversation.agent.imageUrl :
+      global['Freecom'].companyLogoURL
+
     return (
       <div
         className='conversation interior-padding fadeInLeft pointer hover-gray'
@@ -37,7 +41,7 @@ class ConversationItem extends Component {
       >
         <div className='flex'>
           <img
-            src={global['Freecom'].companyLogoURL}
+            src={profileImageUrl}
             alt=''
             className='avatar'></img>
           <div className='conversation-text-padding full-width'>
