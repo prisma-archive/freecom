@@ -15,9 +15,7 @@ class ChatMessages extends Component {
         {this.props.messages.map((message, i) => {
           return (<ChatMessage
             key={i}
-            time={message.createdAt}
-            message={message.text}
-            sentByAgent={message.agent}
+            message={message}
           />)
         })}
         <div style={ {float:"left", clear: "both"} }

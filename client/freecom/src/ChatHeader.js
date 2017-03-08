@@ -7,15 +7,18 @@ class ChatHeader extends Component {
   static propTypes = {
     resetConversation: React.PropTypes.func.isRequired,
     chatPartnerName: React.PropTypes.string.isRequired,
+    profileImageUrl: React.PropTypes.string.isRequired
   }
 
   render() {
+
+
     return (
       <div className='header flex header-padding'>
         <div className='radius fadeInLeft back-button pointer' onClick={this.props.resetConversation}>{'<'}</div>
         <div className='padding-10 flex'>
           <img
-            src={global['Freecom'].companyLogoURL}
+            src={this.props.profileImageUrl}
             alt=''
             className='avatar fadeInLeft'></img>
           <div className='fadeInLeft gutter-left'>

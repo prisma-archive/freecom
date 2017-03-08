@@ -50,6 +50,7 @@ const findConversations = gql`
       agent {
         id
         slackUserName
+        imageUrl
       }
       messages(last: 1) {
         id
@@ -69,6 +70,7 @@ const createConversation = gql`
       agent {
         id
         slackUserName
+        imageUrl
       }
       messages(last: 1) {
         id
@@ -187,8 +189,10 @@ class App extends Component {
       return conversation.id === this.state.selectedConversationId
     })
 
-    const chatPartnerName = selectedConversation.agent ?
+    const agent = selectedConversation.agent
+    const chatPartnerName = agent ?
       selectedConversation.agent.slackUserName : global['Freecom'].companyName
+    const profileImageUrl = agent && agent.imageUrl ? agent.imageUrl : global['Freecom'].companyLogoURL
 
     return (
       <div>
@@ -197,6 +201,7 @@ class App extends Component {
             <ChatHeader
               chatPartnerName={chatPartnerName}
               resetConversation={this._resetConversation}
+              profileImageUrl={profileImageUrl}
             />
             <Chat
               conversationId={this.state.selectedConversationId}

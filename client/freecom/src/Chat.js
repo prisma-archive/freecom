@@ -15,6 +15,7 @@ const createMessage = gql`
       agent {
         id
         slackUserName
+        imageUrl
       }
       conversation {
         id
@@ -37,6 +38,7 @@ const allMessages = gql`
       agent {
         id
         slackUserName
+        imageUrl
       }
     }
   }
@@ -77,6 +79,7 @@ class Chat extends Component {
               agent {
                 id
                 slackUserName
+                imageUrl
               }
             }
           }

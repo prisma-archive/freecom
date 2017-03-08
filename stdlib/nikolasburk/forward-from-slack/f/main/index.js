@@ -53,6 +53,22 @@ module.exports = (params, callback) => {
 
     if (response.allAgents.length > 0) {
 
+      // get the profile picture url for that slack agent and update it in the Graphcool backend
+      const token = 'xoxp-143869968915-143869969027-147144818550-66059a896db494ecfd2afdee0f3f306b&user=U4E7PEQ4C'
+      const userInfoURL = `https://slack.com/api/users.info?token=${token}&user=${slackUserId}`
+      fetch(userInfoURL).then(response =>
+        response.json()
+      ).then(json => {
+          client.mutate(`
+          {
+            updateAgent(id: "${agentId}", imageUrl: "${json.user.profile.image_48}") {
+              id
+            }
+          }
+          `)
+      })
+
+      // the agent who sent the message is already registered in the Graphcool backend
       const agentId = response.allAgents[0].id
       const needToUpdateAgentInConversation = conversation.agent ?  (agentId !== conversation.agent.id) : true
 
@@ -91,6 +107,7 @@ module.exports = (params, callback) => {
     }
     else {
 
+      // there is no agent in the Graphcool backend yet, so we create it directly when updating the conversation
       client.mutate(`
         {
           updateConversation(id: "${conversationId}", agent: {
@@ -104,6 +121,23 @@ module.exports = (params, callback) => {
           }
         }
       `).then(response => {
+
+        // get the profile picture url for that slack agent and update it in the Graphcool backend
+        const token = 'xoxp-143869968915-143869969027-147144818550-66059a896db494ecfd2afdee0f3f306b&user=U4E7PEQ4C'
+        const userInfoURL = `https://slack.com/api/users.info?token=${token}&user=${slackUserId}`
+        fetch(userInfoURL).then(response =>
+          response.json()
+        ).then(json => {
+          client.mutate(`
+          {
+            updateAgent(id: "${agentId}", imageUrl: "${json.user.profile.image_48}") {
+              id
+            }
+          }
+          `)
+        })
+
+        // create the message in the Graphcool backend
         const agentId = response.updateConversation.agent.id
         client.mutate(`
           {
@@ -112,19 +146,16 @@ module.exports = (params, callback) => {
             }
           }
         `).then(() => {
-          let response = 'Posted message to Graphcool:  \'' + message + '\' (conversation:  ' + conversationId + ')'
-          response = response + '\n: Also created new agent in the conversation: ' + agentId
+          let response = 'Posted message to Graphcool:  \'' + message + '\' (conversation:  ' + conversationId + ').'
+          response = response + ' Also set you as the new agent in the conversation.'
           return callback(null, response)
-
         }).catch(error => {
           return callback(error, 'Could not post message to Graphcool!  ' + responseString)
         })
-
       }).catch(error => {
         return callback(error, 'Could not create new agent!  ' + responseString)
       })
     }
-
 
   }).catch(error => {
     return callback(error, 'Could not query conversations!')

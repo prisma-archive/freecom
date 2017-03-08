@@ -5,40 +5,41 @@ import { timeDifference } from './utils'
 class ChatMessage extends Component {
 
   static propTypes = {
-    message: React.PropTypes.string.isRequired,
-    time: React.PropTypes.string.isRequired,
-    sentByAgent: React.PropTypes.any,
+    message: React.PropTypes.any.isRequired,
   }
 
   render() {
 
-    const createdAtTimestamp = new Date(this.props.time).getTime()
+    const createdAtTimestamp = new Date(this.props.message.createdAt).getTime()
     const nowTimestamp = new Date().getTime()
     const ago = timeDifference(nowTimestamp, createdAtTimestamp)
+
+    const agent = this.props.message.agent
+    const profileImageUrl = agent && agent.imageUrl ? agent.imageUrl : global['Freecom'].companyLogoURL
 
     return (
     <div className='fadeInLeft'>
 
-      <div style={{display: this.props.sentByAgent ? 'visible' : 'none'}} className='message-padding'>
+      <div style={{display: this.props.message.agent ? 'visible' : 'none'}} className='message-padding'>
         <div className='flex flex-bottom'>
           <img
-            src={global['Freecom'].companyLogoURL}
+            src={profileImageUrl}
             alt=''
             className='avatar message-avatar'></img>
           <div className='message-container message-container-padding-left'>
             <div className='opaque background-gray padding-20 radius opaque'>
-              <p>{this.props.message}</p>
+              <p>{this.props.message.text}</p>
             </div>
             <p className='right opacity-4'>{ago}</p>
           </div>
         </div>
       </div>
 
-      <div style={{display: !this.props.sentByAgent ? 'visible' : 'none'}} className='message-padding'>
+      <div style={{display: !this.props.message.agent ? 'visible' : 'none'}} className='message-padding'>
         <div className='flex flex-bottom'>
           <div className='message-container message-container-padding-right flex-right'>
             <div className='opaque background-blue white padding-20 radius opaque'>
-              <p>{this.props.message}</p>
+              <p>{this.props.message.text}</p>
             </div>
             <p className='right opacity-4'>{ago}</p>
           </div>
