@@ -134,6 +134,7 @@
 
 .message-container {
     max-width: 100%;
+    word-wrap: break-word;
 }
 
 .message-container-padding-left {
