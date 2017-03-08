@@ -1,5 +1,6 @@
 import React, { Component } from 'react'
 import './Chat.css'
+import './App.css'
 import ChatInput from './ChatInput'
 import ChatMessages from './ChatMessages'
 import { graphql, compose } from 'react-apollo'
@@ -91,14 +92,12 @@ class Chat extends Component {
         const newMessage = subscriptionData.data.Message.node
         const messages = previousState.allMessages ? previousState.allMessages.concat([newMessage]) : [newMessage]
         return {
-          allMessages: messages,
+          allMessa1ges: messages,
         }
       },
       onError: (err) => console.error('An error occured while being subscribed: ', err),
     })
-
   }
-
 
   componentDidUpdate(prevProps) {
     if (prevProps.allMessagesQuery.allMessages !== this.props.allMessagesQuery.allMessages && this.endRef) {
@@ -109,7 +108,15 @@ class Chat extends Component {
   render() {
 
     if (this.props.allMessagesQuery.loading) {
-      return <div>Loading messages ...</div>
+      return (
+        <div
+          className='loading-container'
+        >
+          <div
+            style={{backgroundColor: global['Freecom'].mainColor || 'rgba(0,0,0,.5)'}}
+            className='loading' />
+        </div>
+      )
     }
 
     return (

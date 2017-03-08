@@ -38,7 +38,9 @@ class ChatMessage extends Component {
       <div style={{display: !this.props.message.agent ? 'visible' : 'none'}} className='message-padding'>
         <div className='flex flex-bottom'>
           <div className='message-container message-container-padding-right flex-right'>
-            <div className='opaque background-blue white padding-20 radius opaque'>
+            <div
+              style={{backgroundColor: global['Freecom'].mainColor}}
+              className='white padding-20 radius background-blue'>
               <p>{this.props.message.text}</p>
             </div>
             <p className='right opacity-4'>{ago}</p>
