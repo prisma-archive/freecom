@@ -49,7 +49,8 @@ function render(element) {
 const freecom = {
   render,
   companyName: 'Graphcool',
-  companyLogoURL: 'http://imgur.com/qPjLkW0.png'
+  companyLogoURL: 'http://imgur.com/qPjLkW0.png',
+  mainColor: 'rgba(39,175,96,1)'
 }
 
 global['Freecom'] = freecom

@@ -40,9 +40,9 @@ const createCustomerAndConversation = gql`
 const findConversations = gql`
   query allConversations($customerId: ID!) {
     allConversations(filter: {
-      customer: {
-        id: $customerId
-      }
+    customer: {
+    id: $customerId
+    }
     }){
       id
       updatedAt
@@ -122,7 +122,6 @@ class App extends Component {
     this._rerender()
   }
 
-
   componentWillUnmount() {
     clearTimeout(this._timer)
   }
@@ -187,10 +186,16 @@ class App extends Component {
               <p>New Conversation</p>
             </div>
           </div>
+          <div
+            style={{backgroundColor: global['Freecom'].mainColor}}
+            className='button drop-shadow-hover pointer'
+            onClick={() => this._togglePanel()}
+          />
         </div>
       </div>
     )
   }
+
 
   _chat = (panelStyles, customerId) => {
 
@@ -223,31 +228,31 @@ class App extends Component {
     this.newMessageObserver = this.props.client.subscribe({
       query: gql`
         subscription {
-        Message(filter: {
+          Message(filter: {
           mutation_in: [CREATED]
-        }) {
-          node {
-            id
-            text
-            createdAt
-            conversation {
+          }) {
+            node {
               id
-              updatedAt
-              slackChannelName
-              agent {
+              text
+              createdAt
+              conversation {
                 id
-                slackUserName
+                updatedAt
+                slackChannelName
+                agent {
+                  id
+                  slackUserName
+                }
               }
             }
           }
-      }
-    }
-  `,
+        }
+      `,
     }).subscribe({
-        next: this._handleNewMessage,
-        error(error) {
-          console.error('Subscription callback with error: ', error)
-        },
+      next: this._handleNewMessage,
+      error(error) {
+        console.error('Subscription callback with error: ', error)
+      },
     })
   }
 
