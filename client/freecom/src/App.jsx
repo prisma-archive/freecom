@@ -142,22 +142,26 @@ class App extends Component {
     return (
       <div className='App'>
         {
-          <div className='container'>
-            <div className={panelStyles}>
+          <div>
+            <div className='container'>
+              <div className={panelStyles}>
 
-              {!conversationExists ?
-              Boolean(this.state.conversations) &&
-              this._conversationsList(panelStyles)
-              :
-              customerExists &&
-              this._chat(panelStyles, customerId)}
+                {!conversationExists ?
+                Boolean(this.state.conversations) &&
+                this._conversationsList(panelStyles)
+                :
+                customerExists &&
+                this._chat(panelStyles, customerId)}
 
+              </div>
+              <div
+                style={{backgroundColor: global['Freecom'].mainColor}}
+                className={buttonStyles}
+                onClick={() => this._togglePanel()}
+              >
+                <i className='material-icons'>chat_bubble</i>
+              </div>
             </div>
-            <div
-              style={{backgroundColor: global['Freecom'].mainColor}}
-              className={buttonStyles}
-              onClick={() => this._togglePanel()}
-            ><i className='material-icons'>chat_bubble</i></div>
           </div>
         }
       </div>
