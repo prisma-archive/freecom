@@ -13,7 +13,7 @@ class ConversationsListHeader extends Component {
       <div className='header header-padding'>
         <div className='conversation-header gutter-left'>
           <h3 className='fadeInLeft'>Conversations</h3>
-          <p className='opaque fadeInLeft'>with {global['Freecom'].companyName}</p>
+          <p className='text-opaque fadeInLeft'>with {global['Freecom'].companyName}</p>
         </div>
         <div className='mobile-button-close pointer fadeInLeft' onClick={() => this.props.togglePanel()}>×</div>
       </div>

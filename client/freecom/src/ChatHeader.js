@@ -23,7 +23,7 @@ class ChatHeader extends Component {
             className='avatar fadeInLeft'></img>
           <div className='fadeInLeft gutter-left'>
             {this.props.chatPartnerName}
-            <p className='fadeInLeft opaque'>Last time active</p>
+            <p className='fadeInLeft text-opaque'>Last time active</p>
           </div>
         </div>
       </div>

@@ -136,16 +136,33 @@ class App extends Component {
       'hide': !this.state.isOpen,
       'fadeInUp':this.state.isOpen,
     })
+    const buttonStyles = cx('button drop-shadow-hover pointer flex-center flex', {
+      'drop-shadow-hover-active': this.state.isOpen
+    })
 
     return (
       <div className='App'>
         {
-          !conversationExists ?
-            Boolean(this.state.conversations) &&
-            this._conversationsList(panelStyles)
-            :
-            customerExists &&
-            this._chat(panelStyles, customerId)
+          <div>
+            <div className='container'>
+              <div className={panelStyles}>
+
+                {!conversationExists ?
+                Boolean(this.state.conversations) &&
+                this._conversationsList(panelStyles)
+                :
+                customerExists &&
+                this._chat(panelStyles, customerId)}
+
+              </div>
+              <div
+                className={buttonStyles}
+                onClick={() => this._togglePanel()}
+              >
+                <i className='material-icons'>chat_bubble</i>
+              </div>
+            </div>
+          </div>
         }
       </div>
     )
@@ -154,30 +171,22 @@ class App extends Component {
   _conversationsList = (panelStyles) => {
     return (
       <div>
-        <div className='container'>
-          <div className={panelStyles}>
-            <ConversationsListHeader
-              togglePanel={this._togglePanel}
-            />
-            <div className='body overflow-scroll'>
-              <ConversationsList
-                conversations={this.state.conversations}
-                onSelectConversation={this._onSelectConversation}
-              />
-              <div className='flex flex-hcenter full-width conversation-button-wrapper pointer-events-none'>
-                <div
-                  className='conversation-button background-darkgray drop-shadow-hover pointer flex-center flex pointer-events-initial'
-                  onClick={() => this._initiateNewConversation()}
-                >
-                  <p>New Conversation</p>
-                </div>
-              </div>
+        <ConversationsListHeader
+          togglePanel={this._togglePanel}
+        />
+        <div className='body overflow-scroll'>
+          <ConversationsList
+            conversations={this.state.conversations}
+            onSelectConversation={this._onSelectConversation}
+          />
+          <div className='flex flex-hcenter full-width conversation-button-wrapper pointer-events-none'>
+            <div
+              className='conversation-button background-darkgray drop-shadow-hover pointer flex-center flex pointer-events-initial'
+              onClick={() => this._initiateNewConversation()}
+            >
+              <p>New Conversation</p>
             </div>
           </div>
-          <div
-            className='button drop-shadow-hover pointer'
-            onClick={() => this._togglePanel()}
-          />
         </div>
       </div>
     )
@@ -196,21 +205,16 @@ class App extends Component {
 
     return (
       <div>
-        <div className='container'>
-          <div className={panelStyles}>
-            <ChatHeader
-              chatPartnerName={chatPartnerName}
-              resetConversation={this._resetConversation}
-              profileImageUrl={profileImageUrl}
-            />
-            <Chat
-              conversationId={this.state.selectedConversationId}
-              customerId={customerId}
-              resetConversation={this._resetConversation}
-            />
-          </div>
-          <div className='button pointer drop-shadow-hover' onClick={() => this._togglePanel()}></div>
-        </div>
+        <ChatHeader
+          chatPartnerName={chatPartnerName}
+          resetConversation={this._resetConversation}
+          profileImageUrl={profileImageUrl}
+        />
+        <Chat
+          conversationId={this.state.selectedConversationId}
+          customerId={customerId}
+          resetConversation={this._resetConversation}
+        />
       </div>
     )
   }
