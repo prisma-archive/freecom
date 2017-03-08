@@ -216,7 +216,7 @@
 .conversation {  border-bottom: solid rgba(211, 211 ,211, 0.31) 1px;  }
 
 .conversation-text-padding {  padding: 0 12px; }
-.conversation-ago { width: 180px; text-align: right; }
+.conversation-ago { width: 120px; text-align: right; }
 
 .conversation-button-wrapper {
     position: absolute;
