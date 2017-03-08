@@ -170,7 +170,7 @@ class App extends Component {
 
   _conversationsList = (panelStyles) => {
     return (
-      <div>
+      <span>
         <ConversationsListHeader
           togglePanel={this._togglePanel}
         />
@@ -187,13 +187,8 @@ class App extends Component {
               <p>New Conversation</p>
             </div>
           </div>
-          <div
-            style={{backgroundColor: global['Freecom'].mainColor}}
-            className='button drop-shadow-hover pointer'
-            onClick={() => this._togglePanel()}
-          />
         </div>
-      </div>
+      </span>
     )
   }
 
@@ -210,7 +205,7 @@ class App extends Component {
     const profileImageUrl = agent && agent.imageUrl ? agent.imageUrl : global['Freecom'].companyLogoURL
 
     return (
-      <div>
+      <span>
         <ChatHeader
           chatPartnerName={chatPartnerName}
           resetConversation={this._resetConversation}
@@ -221,7 +216,7 @@ class App extends Component {
           customerId={customerId}
           resetConversation={this._resetConversation}
         />
-      </div>
+      </span>
     )
   }
 
