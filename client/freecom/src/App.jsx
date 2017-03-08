@@ -142,25 +142,22 @@ class App extends Component {
     return (
       <div className='App'>
         {
-          <div>
-            <div className='container'>
-              <div className={panelStyles}>
+          <div className='container'>
+            <div className={panelStyles}>
 
-                {!conversationExists ?
-                Boolean(this.state.conversations) &&
-                this._conversationsList(panelStyles)
-                :
-                customerExists &&
-                this._chat(panelStyles, customerId)}
+              {!conversationExists ?
+              Boolean(this.state.conversations) &&
+              this._conversationsList(panelStyles)
+              :
+              customerExists &&
+              this._chat(panelStyles, customerId)}
 
-              </div>
-              <div
-                className={buttonStyles}
-                onClick={() => this._togglePanel()}
-              >
-                <i className='material-icons'>chat_bubble</i>
-              </div>
             </div>
+            <div
+              style={{backgroundColor: global['Freecom'].mainColor}}
+              className={buttonStyles}
+              onClick={() => this._togglePanel()}
+            ><i className='material-icons'>chat_bubble</i></div>
           </div>
         }
       </div>
@@ -169,7 +166,7 @@ class App extends Component {
 
   _conversationsList = (panelStyles) => {
     return (
-      <div>
+      <span>
         <ConversationsListHeader
           togglePanel={this._togglePanel}
         />
@@ -186,13 +183,8 @@ class App extends Component {
               <p>New Conversation</p>
             </div>
           </div>
-          <div
-            style={{backgroundColor: global['Freecom'].mainColor}}
-            className='button drop-shadow-hover pointer'
-            onClick={() => this._togglePanel()}
-          />
         </div>
-      </div>
+      </span>
     )
   }
 
@@ -209,7 +201,7 @@ class App extends Component {
     const profileImageUrl = agent && agent.imageUrl ? agent.imageUrl : global['Freecom'].companyLogoURL
 
     return (
-      <div>
+      <span>
         <ChatHeader
           chatPartnerName={chatPartnerName}
           resetConversation={this._resetConversation}
@@ -220,7 +212,7 @@ class App extends Component {
           customerId={customerId}
           resetConversation={this._resetConversation}
         />
-      </div>
+      </span>
     )
   }
 
