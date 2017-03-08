@@ -8,19 +8,21 @@ module.exports = (params, callback) => {
   console.log('Execute function ...')
 
   let username
+  let emoji
 
   if (params.kwargs.createdNode.agent) {
     username = params.kwargs.createdNode.agent.slackUserName
+    emoji = ':telephone_receiver:'
   }
   else {
     username = params.kwargs.createdNode.conversation.customer.name
+    emoji = ':question:'
   }
 
   const text = params.kwargs.createdNode.text
   const slackChannelName = params.kwargs.createdNode.conversation.slackChannelName
 
-  const slackURL = `https://slack.com/api/chat.postMessage?
-    token=${token}&channel=${slackChannelName}&username=${username}&text=${text}`
+  const slackURL = `https://slack.com/api/chat.postMessage?token=${token}&channel=${slackChannelName}&username=${username}&text=${text}&icon_emoji=${emoji}`
 
   fetch(slackURL,
   {
