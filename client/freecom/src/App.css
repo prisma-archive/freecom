@@ -117,7 +117,7 @@
 }
 
 .panel .message-body, .Dropzone {
-    height: calc(100% - 68px);
+    height: calc(100% - 53px);
 }
 
 .Dropzone {
