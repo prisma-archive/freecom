@@ -121,7 +121,7 @@ class Chat extends Component {
 
     return (
       <Dropzone
-        className='Dropzone'
+        className='Dropzone relative'
         onDrop={this._onFileDrop}
         accept='image/*'
         multiple={false}
