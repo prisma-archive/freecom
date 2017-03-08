@@ -376,7 +376,7 @@ class App extends Component {
   }
 
   _onSelectConversation = (conversation) => {
-    console.debug('Selected conversation: ', conversation)
+    console.debug('Selected conversation: ', conversation, conversation.id)
     this.setState({
       selectedConversationId: conversation.id,
     })
