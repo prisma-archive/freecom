@@ -5,24 +5,10 @@ const Transport = require('lokka-transport-http').Transport
 const client = new Lokka({
   transport: new Transport('https://api.graph.cool/simple/v1/cizf8g3fr1sp90139ikdjayb7/')
 })
-/**
- * Your function call
- * @param {Object} params Execution parameters
- *   Members
- *   - {Array} args Arguments passed to function
- *   - {Object} kwargs Keyword arguments (key-value pairs) passed to function
- *   - {String} remoteAddress The IPv4 or IPv6 address of the caller
- *
- * @param {Function} callback Execute this to end the function call
- *   Arguments
- *   - {Error} error The error to show if function fails
- *   - {Any} returnValue JSON serializable (or Buffer) return value
- */
-module.exports = (params, callback) => {
 
-  // params.kwargs contains values for the following keys:
-  // token, team_id, team_domain, channel_id, channel_name,
-  // user_id, user_name, text, command
+const token = 'xoxp-143869968915-143869969027-147144818550-66059a896db494ecfd2afdee0f3f306b&user=U4E7PEQ4C'
+
+module.exports = (params, callback) => {
 
   const message = params.kwargs['text']
   const slackChannelName = params.kwargs['channel_name']
@@ -123,7 +109,6 @@ module.exports = (params, callback) => {
       `).then(response => {
 
         // get the profile picture url for that slack agent and update it in the Graphcool backend
-        const token = 'xoxp-143869968915-143869969027-147144818550-66059a896db494ecfd2afdee0f3f306b&user=U4E7PEQ4C'
         const userInfoURL = `https://slack.com/api/users.info?token=${token}&user=${slackUserId}`
         fetch(userInfoURL).then(response =>
           response.json()

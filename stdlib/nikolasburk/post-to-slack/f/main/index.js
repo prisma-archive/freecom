@@ -1,41 +1,26 @@
 /* Import dependencies, declare constants */
 require('isomorphic-fetch')
 
-/**
-* Your function call
-* @param {Object} params Execution parameters
-*   Members
-*   - {Array} args Arguments passed to function
-*   - {Object} kwargs Keyword arguments (key-value pairs) passed to function
-*   - {String} remoteAddress The IPv4 or IPv6 address of the caller
-*
-* @param {Function} callback Execute this to end the function call
-*   Arguments
-*   - {Error} error The error to show if function fails
-*   - {Any} returnValue JSON serializable (or Buffer) return value
-*/
-
 const token = 'xoxp-143869968915-143869969027-147144818550-66059a896db494ecfd2afdee0f3f306b'
-
-// token for Freecom App installed in Freecom team https://api.slack.com/apps/A482PQPK5/install-on-team
-// const token = 'xoxp-143869968915-143869969027-150829470068-5b21b7e94f772711cfdfabb42357b909'
 
 module.exports = (params, callback) => {
 
   console.log('Execute function ...')
 
+  let username
+
   if (params.kwargs.createdNode.agent) {
-    return callback(null, 'Did not post to Slack since message was sent by Agent.')
+    username = params.kwargs.createdNode.agent.slackUserName
+  }
+  else {
+    username = params.kwargs.createdNode.conversation.customer.name
   }
 
   const text = params.kwargs.createdNode.text
   const slackChannelName = params.kwargs.createdNode.conversation.slackChannelName
-  const username = params.kwargs.createdNode.conversation.customer.name
 
-  let slackURL = 'https://slack.com/api/chat.postMessage?token=' + token
-  slackURL = slackURL + '&' + 'channel=' + slackChannelName
-  slackURL = slackURL + '&' + 'username=' + username
-  slackURL = slackURL + '&' + 'text=' + text
+  const slackURL = `https://slack.com/api/chat.postMessage?
+    token=${token}&channel=${slackChannelName}&username=${username}&text=${text}`
 
   fetch(slackURL,
   {
@@ -44,7 +29,7 @@ module.exports = (params, callback) => {
       },
       method: 'GET',
   })
-  .then(response => {
+  .then(() => {
     return callback(null, 'Posted message to Slack!\n\n' + slackURL)
   })
   .catch(error => {
