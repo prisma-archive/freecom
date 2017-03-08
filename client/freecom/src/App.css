@@ -10,7 +10,7 @@
 .drop-shadow-hover:hover { box-shadow: 0px 8px 30px -4px rgba(0, 0, 0, 0.55); }
 .drop-shadow-hover { box-shadow: 0px 6px 30px -4px rgba(0,0,0,0.0); transition: box-shadow 0.3s ease; }
 .drop-shadow-hover-active { box-shadow: 0px 6px 30px -4px rgba(0,0,0,0.45); }
-.box-shadow-inset {  box-shadow: inset 0px 5px 8px -1px rgba(0,0,0,0.12);  }
+.header-shadow { box-shadow: 0px -3px 42px 6px rgba(0,0,0,0.17); }
 .radius { border-radius: 9px; }
 .radius-bottom { border-radius: 0 0 9px 9px; }
 .hide { visibility: hidden; }
@@ -216,7 +216,7 @@
 .conversation {  border-bottom: solid rgba(211, 211 ,211, 0.31) 1px;  }
 
 .conversation-text-padding {  padding: 0 12px; }
-.conversation-ago { width: 80px; }
+.conversation-ago { width: 180px; text-align: right; }
 
 .conversation-button-wrapper {
     position: absolute;

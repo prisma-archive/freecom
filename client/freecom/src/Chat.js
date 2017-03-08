@@ -127,7 +127,7 @@ class Chat extends Component {
         multiple={false}
         disableClick={true}
       >
-        <div className='message-body overflow-scroll'>
+        <div className='message-body overflow-scroll box-shadow-inset'>
           <ChatMessages
             messages={this.props.allMessagesQuery.allMessages || []}
             setEndRef={this._setEndRef}

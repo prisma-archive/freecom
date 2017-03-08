@@ -16,7 +16,7 @@ class ChatHeader extends Component {
     return (
       <div
         style={{backgroundColor: global['Freecom'].mainColor}}
-        className='header flex header-padding-chat items-center'
+        className='header flex header-padding-chat items-center header-shadow'
       >
         <div className='radius fadeInLeft flex flex-center back-button pointer' onClick={this.props.resetConversation}>
           <i className='material-icons'>keyboard_arrow_left</i>
