@@ -121,7 +121,7 @@
 }
 
 .Dropzone {
-    height: calc(100% - 68px);
+    height: calc(100% - 80px);
 }
 
 .panel .body {
@@ -136,6 +136,11 @@
 
 .header-padding {
     padding-top: 16px;
+    padding-left: 12px;
+}
+
+.header-padding-chat {
+    padding-top: 2px;
     padding-left: 12px;
 }
 
@@ -176,6 +181,10 @@
 
 .conversation-list {
     padding-bottom: 80px;
+}
+
+.conversation-title {
+    height: 40px;
 }
 
 .chat-input {
@@ -229,8 +238,8 @@
 }
 
 .back-button {
-    padding: 20px;
-    margin: 0 12px;
+    padding: 0 10px;
+    margin: 0 4px;
     height: 50px;
 }
 
