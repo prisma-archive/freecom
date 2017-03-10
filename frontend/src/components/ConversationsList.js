@@ -9,11 +9,9 @@ class ConversationsList extends Component {
   }
 
   render() {
-
     return (
       <div className='conversation-list'>
         {this.props.conversations.map((conversation, i) => {
-          console.log('ConversationsList - render: ', conversation)
           return (conversation.messages.length > 0 && <ConversationItem
             key={i}
             conversation={conversation}
@@ -22,7 +20,6 @@ class ConversationsList extends Component {
         })}
       </div>
     )
-
   }
 
 }

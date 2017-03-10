@@ -67,7 +67,7 @@ const createConversation = gql`
   }
 `
 
-const newMessageSusbcription = gql`
+const newMessageSubscription = gql`
   subscription {
     Message(filter: {
     mutation_in: [CREATED]
@@ -211,7 +211,7 @@ class App extends Component {
 
   _subscribeToNewMessages = (componentRef) => {
     this.newMessageObserver = this.props.client.subscribe({
-      query: newMessageSusbcription,
+      query: newMessageSubscription,
     }).subscribe({
       next: this._handleNewMessage,
       error(error) {

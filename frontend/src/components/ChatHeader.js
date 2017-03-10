@@ -3,7 +3,7 @@ import './ChatHeader.css'
 import './App.css'
 import gql from 'graphql-tag'
 import { graphql } from 'react-apollo'
-import { timeDifference } from '../utils'
+import { timeDifferenceForDate } from '../utils'
 
 const lastMessageOfCurrentAgent = gql`
   query lastMessageOfCurrentAgent($agentId: ID!) {
@@ -12,6 +12,27 @@ const lastMessageOfCurrentAgent = gql`
       messages(last: 1) {
         id
         createdAt
+      }
+    }
+  }
+`
+
+const newMessageSubscription = gql`
+  subscription Message {
+    Message(filter: {
+      mutation_in: [CREATED]
+    }) {
+      node {
+        id
+        agent {
+          id
+          slackUserName
+          imageUrl
+          messages(last: 1) {
+            id
+            createdAt
+          }
+        }
       }
     }
   }
@@ -30,54 +51,23 @@ class ChatHeader extends Component {
   componentDidMount() {
 
     if (this.props.lastMessageOfCurrentAgentQuery) {
-
       this.props.lastMessageOfCurrentAgentQuery.subscribeToMore({
-        document: gql`
-          subscription Message {
-            Message(filter: {
-              mutation_in: [CREATED]
-            }) {
-              node {
-                id
-                agent {
-                  id
-                  slackUserName
-                  imageUrl
-                  messages(last: 1) {
-                    id
-                    createdAt
-                  }
-                }
-              }
-            }
-          }
-        `,
+        document: newMessageSubscription,
         updateQuery: (previousState, {subscriptionData}) => {
-
           const newMessage = subscriptionData.data.Message.node
           if (!newMessage.agent) {
             return previousState
           }
-
           return {
             lastMessageOfCurrentAgent: newMessage.agent
           }
-
         }
       })
     }
   }
 
   render() {
-    let headerSubtitle = ''
-    if (this.props.lastMessageOfCurrentAgentQuery && !this.props.lastMessageOfCurrentAgentQuery.loading) {
-      const createdAtTimestamp = new Date(this.props.lastMessageOfCurrentAgentQuery.Agent.messages[0].createdAt).getTime()
-      const nowTimestamp = new Date().getTime()
-      headerSubtitle = 'Last active ' + timeDifference(nowTimestamp, createdAtTimestamp)
-    } else {
-      headerSubtitle = 'Created '  + this.props.created
-    }
-
+    const headerSubtitle = this._generateHeaderSubtitle()
     return (
       <div
         style={{backgroundColor: global['Freecom'].mainColor}}
@@ -98,6 +88,17 @@ class ChatHeader extends Component {
         </div>
       </div>
     )
+  }
+
+  _generateHeaderSubtitle = () => {
+    let headerSubtitle = ''
+    if (this.props.lastMessageOfCurrentAgentQuery && !this.props.lastMessageOfCurrentAgentQuery.loading) {
+      const lastMessage = this.props.lastMessageOfCurrentAgentQuery.Agent.messages[0]
+      headerSubtitle = 'Last active ' + timeDifferenceForDate(lastMessage.createdAt)
+    } else {
+      headerSubtitle = 'Created '  + this.props.created
+    }
+    return headerSubtitle
   }
 
 }

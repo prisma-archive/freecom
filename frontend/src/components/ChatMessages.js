@@ -19,7 +19,6 @@ class ChatMessages extends Component {
   }
 
   render() {
-
     return (
       <div className='ChatMessages padding-v-20'>
         {this.props.messages.map((message, i) => {
@@ -37,7 +36,6 @@ class ChatMessages extends Component {
     const node = ReactDOM.findDOMNode(this._messagesEnd)
     node.scrollIntoView({behavior: 'smooth'})
   }
-
 
 }
 

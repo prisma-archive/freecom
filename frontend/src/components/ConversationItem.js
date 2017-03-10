@@ -1,6 +1,6 @@
 import React, { Component} from 'react'
 import './ConversationItem.css'
-import { timeDifference } from '../utils'
+import { timeDifferenceForDate } from '../utils'
 
 class ConversationItem extends Component {
 
@@ -10,30 +10,7 @@ class ConversationItem extends Component {
   }
 
   render() {
-
-    const lastMessage = this.props.conversation.messages[0]
-    let ago
-    let message
-    if (lastMessage) {
-      const createdAtTimestamp = new Date(lastMessage.createdAt).getTime()
-      const nowTimestamp = new Date().getTime()
-      ago = timeDifference(nowTimestamp, createdAtTimestamp)
-      message = lastMessage.text.split('').length > 32 ?
-        lastMessage.text.split('').splice(0,32).join('') + '...' :
-        lastMessage.text
-    } else {
-      ago = ''
-      message = 'Start a new conversation'
-    }
-
-    const chatPartnerName = this.props.conversation.agent ?
-      this.props.conversation.agent.slackUserName :
-      global['Freecom'].companyName
-
-    const profileImageUrl =  this.props.conversation.agent && this.props.conversation.agent.imageUrl ?
-      this.props.conversation.agent.imageUrl :
-      global['Freecom'].companyLogoURL
-
+    const {ago, messageText, chatPartnerName, profileImageUrl} = this._previewForMessage()
     return (
       <div
         className='conversation interior-padding fadeInLeft pointer hover-gray'
@@ -49,11 +26,35 @@ class ConversationItem extends Component {
               <p className='full-width opacity-6'>{chatPartnerName}</p>
               <p className='opaque conversation-ago'>{ago}</p>
             </div>
-            <p className='full-width opacity-8'>{message}</p>
+            <p className='full-width opacity-8'>{messageText}</p>
           </div>
         </div>
       </div>
     )
+  }
+
+  _previewForMessage = () => {
+    const message = this.props.conversation.messages[0]
+    let ago
+    let messageText
+    if (message) {
+      ago = timeDifferenceForDate(message.createdAt)
+      messageText = message.text.split('').length > 32 ?
+        message.text.split('').splice(0,32).join('') + '...' : message.text
+    } else {
+      ago = ''
+      messageText = 'Start a new conversation'
+    }
+
+    const chatPartnerName = this.props.conversation.agent ?
+      this.props.conversation.agent.slackUserName :
+      global['Freecom'].companyName
+
+    const profileImageUrl =  this.props.conversation.agent && this.props.conversation.agent.imageUrl ?
+      this.props.conversation.agent.imageUrl :
+      global['Freecom'].companyLogoURL
+
+    return {ago, messageText, chatPartnerName, profileImageUrl}
   }
 
 }
