@@ -39,3 +39,24 @@ export function timeDifference(current, previous) {
     return Math.round(elapsed/msPerYear ) + ' years ago';
   }
 }
+
+export function sortConversationByDateCreated(conversation1, conversation2) {
+
+  const lastMessage1 = conversation1.messages[0]
+  const lastMessage2 = conversation2.messages[0]
+
+  if (!lastMessage1 || !lastMessage2) {
+    return 0
+  }
+
+  const date1 = new Date(lastMessage1.createdAt).getTime()
+  const date2 = new Date(lastMessage2.createdAt).getTime()
+  if (date1 > date2) {
+    return -1
+  }
+  if (date1 < date2) {
+    return 1
+  }
+  return 0
+
+}

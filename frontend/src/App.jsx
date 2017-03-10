@@ -8,7 +8,7 @@ import ConversationsListHeader from './ConversationsListHeader'
 import { graphql, compose, withApollo } from 'react-apollo'
 import gql from 'graphql-tag'
 import generateStupidName from 'sillyname'
-import { timeDifference } from './utils'
+import { timeDifference, sortConversationByDateCreated } from './utils'
 
 const TEST_WITH_NEW_CUSTOMER = false
 const FREECOM_CUSTOMER_ID_KEY = 'FREECOM_CUSTOMER_ID'
@@ -23,31 +23,17 @@ const createCustomer = gql`
   }
 `
 
-const createCustomerAndConversation = gql`
-  mutation createCustomer($name: String!, $slackChannelName: String!) {
-    createCustomer(name: $name, conversations: [{
-    slackChannelName: $slackChannelName,
-    }]) {
-      id
-      conversations {
-        id
-        updatedAt
-        slackChannelName
-      }
-    }
-  }
-`
-
 const findConversations = gql`
   query allConversations($customerId: ID!) {
     allConversations(filter: {
-    customer: {
-    id: $customerId
-    }
+      customer: {
+        id: $customerId
+      }
     }){
       id
       updatedAt
       slackChannelName
+      slackChannelIndex
       agent {
         id
         slackUserName
@@ -63,11 +49,12 @@ const findConversations = gql`
 `
 
 const createConversation = gql`
-  mutation createConversation($customerId: ID!, $slackChannelName: String!) {
-    createConversation(customerId: $customerId, slackChannelName: $slackChannelName) {
+  mutation createConversation($customerId: ID!, $slackChannelName: String!, $slackChannelIndex: Int!) {
+    createConversation(customerId: $customerId, slackChannelName: $slackChannelName, slackChannelIndex: $slackChannelIndex) {
       id
       updatedAt
       slackChannelName
+      slackChannelIndex
       agent {
         id
         slackUserName
@@ -223,7 +210,7 @@ class App extends Component {
       query: gql`
         subscription {
           Message(filter: {
-          mutation_in: [CREATED]
+            mutation_in: [CREATED]
           }) {
             node {
               id
@@ -233,6 +220,7 @@ class App extends Component {
                 id
                 updatedAt
                 slackChannelName
+                slackChannelIndex
                 agent {
                   id
                   slackUserName
@@ -300,24 +288,7 @@ class App extends Component {
     })
 
     const sortedConversations = findConversationsResult.data.allConversations.slice()
-    sortedConversations.sort((conversation1, conversation2) => {
-      const lastMessage1 = conversation1.messages[0]
-      const lastMessage2 = conversation2.messages[0]
-
-      if (!lastMessage1 || !lastMessage2) {
-        return 0
-      }
-
-      const date1 = new Date(lastMessage1.createdAt).getTime()
-      const date2 = new Date(lastMessage2.createdAt).getTime()
-      if (date1 > date2) {
-        return -1
-      }
-      if (date1 < date2) {
-        return 1
-      }
-      return 0
-    })
+    sortedConversations.sort(sortConversationByDateCreated)
 
     this.setState({conversations: sortedConversations})
   }
@@ -358,24 +329,17 @@ class App extends Component {
   _createNewConversation = async (customerId, username) => {
 
     // find channel with greatest position appended as suffix
-    const channelPositions = this.state.conversations.map(conversation => {
-      const slackChannelNameComponents = conversation.slackChannelName.split('-')
-      return slackChannelNameComponents[slackChannelNameComponents.length-1]
-    })
-
-    let newChannelPosition = 1
-    if (channelPositions.length > 0) {
-      const maxPosition = Math.max.apply(null, channelPositions)
-      newChannelPosition = maxPosition + 1
-    }
+    const channelPositions = this.state.conversations.map(c => c.slackChannelIndex)
+    const newChannelPosition = channelPositions.length === 0 ? 1 : Math.max.apply(null, channelPositions) + 1
     const newChannelName = (username + '-' + newChannelPosition).toLowerCase()
 
     // create new conversation for the customer
-    console.debug('Create conversation for existing customer: ', customerId, newChannelName)
+    console.debug('Create conversation for existing customer: ', customerId, newChannelName, newChannelName)
     const result = await this.props.createConversationMutation({
       variables: {
         customerId: customerId,
-        slackChannelName: newChannelName
+        slackChannelName: newChannelName,
+        slackChannelIndex: newChannelPosition,
       }
     })
     const conversationId = result.data.createConversation.id
@@ -423,7 +387,6 @@ class App extends Component {
 const appWithMutations = compose(
   graphql(createConversation, {name : 'createConversationMutation'}),
   graphql(createCustomer, {name: 'createCustomerMutation'}),
-  graphql(createCustomerAndConversation, {name: 'createCustomerAndConversationMutation'})
 )(App)
 
 export default withApollo(appWithMutations)
