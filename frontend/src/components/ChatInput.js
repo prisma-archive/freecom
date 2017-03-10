@@ -45,7 +45,7 @@ class ChatInput extends Component {
         >
           <div className='attachment-container h100'>
             <img
-              src={require('./assets/attachment.svg')}
+              src={require('./../assets/attachment.svg')}
               alt=''
               width={26}
               height={26}

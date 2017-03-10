@@ -8,7 +8,7 @@ import ConversationsListHeader from './ConversationsListHeader'
 import ToggleOpeningStateButton from './ToggleOpeningStateButton'
 import { graphql, compose, withApollo } from 'react-apollo'
 import gql from 'graphql-tag'
-import { timeDifferenceForDate, sortConversationByDateCreated, generateShortStupidName } from './utils'
+import { timeDifferenceForDate, sortConversationByDateCreated, generateShortStupidName } from '../utils'
 
 const TEST_WITH_NEW_CUSTOMER = false
 const FREECOM_CUSTOMER_ID_KEY = 'FREECOM_CUSTOMER_ID'
@@ -241,7 +241,7 @@ class App extends Component {
   }
 
   _setupNewCustomer = async () => {
-    const username = this._generateShortStupidName(17)
+    const username = generateShortStupidName(17)
     const result = await this.props.createCustomerMutation({
       variables: {
         name: username,

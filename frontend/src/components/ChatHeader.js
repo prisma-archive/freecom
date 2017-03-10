@@ -3,7 +3,7 @@ import './ChatHeader.css'
 import './App.css'
 import gql from 'graphql-tag'
 import { graphql } from 'react-apollo'
-import { timeDifference } from './utils'
+import { timeDifference } from '../utils'
 
 const lastMessageOfCurrentAgent = gql`
   query lastMessageOfCurrentAgent($agentId: ID!) {

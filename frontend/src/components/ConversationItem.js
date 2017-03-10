@@ -1,6 +1,6 @@
 import React, { Component} from 'react'
 import './ConversationItem.css'
-import { timeDifference } from './utils'
+import { timeDifference } from '../utils'
 
 class ConversationItem extends Component {
 
