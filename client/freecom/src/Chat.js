@@ -45,20 +45,83 @@ const allMessages = gql`
   }
 `
 
+// const INITIAL_SECONDS_UNTIL_RERENDER = 2
+
 class Chat extends Component {
 
   static propTypes = {
     conversationId: React.PropTypes.string.isRequired,
     allMessagesQuery: React.PropTypes.any.isRequired,
+    secondsUntilRerender: React.PropTypes.number.isRequired,
     // updateLastMessage: React.PropTypes.func.isRequired,
   }
+
+  _timer = null
 
   state = {
     message: '',
     isUploadingImage: false,
+    // secondsUntilRerender: INITIAL_SECONDS_UNTIL_RERENDER,
   }
 
   componentDidMount() {
+    this._subscribeToNewMessages(this)
+    this._rerender()
+  }
+
+  componentDidUpdate(prevProps) {
+    if (prevProps.allMessagesQuery.allMessages !== this.props.allMessagesQuery.allMessages && this.endRef) {
+      this.endRef.scrollIntoView()
+    }
+  }
+
+  componentWillUnmount() {
+    clearTimeout(this._timer)
+  }
+
+  render() {
+    if (this.props.allMessagesQuery.loading) {
+      return (
+        <div
+          className='loading-container'
+        >
+          <div
+            style={{backgroundColor: global['Freecom'].mainColor || 'rgba(0,0,0,.5)'}}
+            className='loading' />
+        </div>
+      )
+    }
+
+    return (
+      <Dropzone
+        className='Dropzone relative'
+        onDrop={this._onFileDrop}
+        accept='image/*'
+        multiple={false}
+        disableClick={true}
+      >
+        <div className='message-body overflow-y-scroll overflow-x-hidden box-shadow-inset'>
+          <ChatMessages
+            messages={this.props.allMessagesQuery.allMessages || []}
+            setEndRef={this._setEndRef}
+            secondsUntilRerender={this.props.secondsUntilRerender}
+          />
+          {this.state.isUploadingImage &&
+          <div className='UploadImageIndicator'>Uploading image ...</div>
+          }
+          <ChatInput
+            message={this.state.message}
+            onTextInput={message => this.setState({message})}
+            onResetText={() => this.setState({message: ''})}
+            onSend={this._onSend}
+            onDrop={this._onFileDrop}
+          />
+        </div>
+      </Dropzone>
+    )
+  }
+
+  _subscribeToNewMessages = (componentRef) => {
     this.newMessageSubscription = this.props.allMessagesQuery.subscribeToMore({
       document: gql`
         subscription {
@@ -95,56 +158,18 @@ class Chat extends Component {
           allMessages: messages,
         }
       },
-      onError: (err) => console.error('An error occured while being subscribed: ', err),
+      onError: (err) => {
+        console.error('Chat - An error occured while being subscribed: ', err)
+        console.debug('Chat - Subscribe again')
+        componentRef._subscribeToNewMessages(componentRef)
+      }
     })
+
   }
 
-  componentDidUpdate(prevProps) {
-    if (prevProps.allMessagesQuery.allMessages !== this.props.allMessagesQuery.allMessages && this.endRef) {
-      this.endRef.scrollIntoView()
-    }
-  }
-
-  render() {
-
-    if (this.props.allMessagesQuery.loading) {
-      return (
-        <div
-          className='loading-container'
-        >
-          <div
-            style={{backgroundColor: global['Freecom'].mainColor || 'rgba(0,0,0,.5)'}}
-            className='loading' />
-        </div>
-      )
-    }
-
-    return (
-      <Dropzone
-        className='Dropzone relative'
-        onDrop={this._onFileDrop}
-        accept='image/*'
-        multiple={false}
-        disableClick={true}
-      >
-        <div className='message-body overflow-scroll box-shadow-inset'>
-          <ChatMessages
-            messages={this.props.allMessagesQuery.allMessages || []}
-            setEndRef={this._setEndRef}
-          />
-          {this.state.isUploadingImage &&
-          <div className='UploadImageIndicator'>Uploading image ...</div>
-          }
-          <ChatInput
-            message={this.state.message}
-            onTextInput={message => this.setState({message})}
-            onResetText={() => this.setState({message: ''})}
-            onSend={this._onSend}
-            onDrop={this._onFileDrop}
-          />
-        </div>
-      </Dropzone>
-    )
+  _rerender = () => {
+    this.forceUpdate()
+    this._timer = setTimeout(this._rerender, this.props.secondsUntilRerender * 1000)
   }
 
   _onSend = () => {

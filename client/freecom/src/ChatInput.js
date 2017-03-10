@@ -4,6 +4,10 @@ import Dropzone from 'react-dropzone'
 
 class ChatInput extends Component {
 
+  state = {
+    inputHasFocus: true
+  }
+
   static propTypes = {
     message: React.PropTypes.string.isRequired,
     onTextInput: React.PropTypes.func.isRequired,
@@ -14,10 +18,12 @@ class ChatInput extends Component {
 
   render() {
     return (
-      <div className='chat-input flex flex-bottom radius-bottom background-white'>
+      <div className={`chat-input flex items-center radius-bottom
+            ${this.state.inputHasFocus ? 'chat-input-shadow' : 'light-background'}`}>
         <input
-          className='InputField input'
+          className={`InputField input ${!this.state.inputHasFocus && 'light-background'}`}
           type='text'
+          placeholder='Write a reply ...'
           value={this.props.message}
           autoFocus={true}
           onChange={(e) => this.props.onTextInput(e.target.value)}
@@ -27,20 +33,28 @@ class ChatInput extends Component {
               this.props.onResetText()
             }
           }}
+          onFocus={() => {
+            this.setState({inputHasFocus: true})
+          }}
+          onBlur={() => {
+            this.setState({inputHasFocus: false})
+          }}
         />
         <Dropzone
-          className='Dropzone'
+          className='input-dropzone'
           onDrop={this.props.onDrop}
           accept='image/*'
           multiple={false}
         >
-          <img
-            src={require('./assets/attachment.svg')}
-            alt=''
-            width={36}
-            height={36}
-            className='opaque pointer'
-          />
+          <div className='attachment-container h100'>
+            <img
+              src={require('./assets/attachment.svg')}
+              alt=''
+              width={26}
+              height={26}
+              className='opacity-3 pointer'
+            />
+          </div>
         </Dropzone>
       </div>
     )

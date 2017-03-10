@@ -5,10 +5,10 @@ import './App.css'
 class ConversationsListHeader extends Component {
 
   static propTypes = {
-    togglePanel: React.PropTypes.func.isRequired,
   }
 
   render() {
+
     return (
       <div
         style={{backgroundColor: global['Freecom'].mainColor}}
@@ -18,7 +18,6 @@ class ConversationsListHeader extends Component {
           <h3 className='fadeInLeft'>Conversations</h3>
           <p className='text-opaque fadeInLeft'>with {global['Freecom'].companyName}</p>
         </div>
-        <div className='mobile-button-close pointer fadeInLeft' onClick={() => this.props.togglePanel()}>×</div>
       </div>
     )
 

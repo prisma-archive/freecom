@@ -30,7 +30,7 @@ class ChatMessage extends Component {
             <div className='opaque background-gray padding-20 radius opaque'>
               <p>{this.props.message.text}</p>
             </div>
-            <p className='right opacity-4'>{ago}</p>
+            <p className='right opacity-4 padding-top-2'>{ago}</p>
           </div>
         </div>
       </div>
@@ -43,7 +43,7 @@ class ChatMessage extends Component {
               className='white padding-20 radius background-blue'>
               <p>{this.props.message.text}</p>
             </div>
-            <p className='right opacity-4'>{ago}</p>
+            <p className='right opacity-4 padding-top-2'>{ago}</p>
           </div>
         </div>
       </div>

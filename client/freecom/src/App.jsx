@@ -82,7 +82,7 @@ const createConversation = gql`
   }
 `
 
-const INITIAL_SECONDS_UNTIL_RERENDER = 2
+const INITIAL_SECONDS_UNTIL_RERENDER = 4
 
 class App extends Component {
 
@@ -118,8 +118,9 @@ class App extends Component {
     }
 
     // subscribe to new messages
-    this._subscribeToNewMessages()
+    this._subscribeToNewMessages(this)
 
+    // start periodic rerender
     this._rerender()
   }
 
@@ -149,10 +150,10 @@ class App extends Component {
 
                 {!conversationExists ?
                 Boolean(this.state.conversations) &&
-                this._conversationsList(panelStyles)
+                this._conversationsList()
                 :
                 customerExists &&
-                this._chat(panelStyles, customerId)}
+                this._chat(customerId)}
 
               </div>
               <div
@@ -160,7 +161,7 @@ class App extends Component {
                 className={buttonStyles}
                 onClick={() => this._togglePanel()}
               >
-                <i className='material-icons'>chat_bubble</i>
+                <i className='material-icons'>{this.state.isOpen ? 'close' : 'chat_bubble'}</i>
               </div>
             </div>
           </div>
@@ -169,13 +170,11 @@ class App extends Component {
     )
   }
 
-  _conversationsList = (panelStyles) => {
+  _conversationsList = () => {
     return (
       <span>
-        <ConversationsListHeader
-          togglePanel={this._togglePanel}
-        />
-        <div className='body overflow-scroll'>
+        <ConversationsListHeader />
+        <div className='body overflow-y-scroll overflow-x-hidden'>
           <ConversationsList
             conversations={this.state.conversations}
             onSelectConversation={this._onSelectConversation}
@@ -193,9 +192,7 @@ class App extends Component {
     )
   }
 
-
-  _chat = (panelStyles, customerId) => {
-
+  _chat = (customerId) => {
     const selectedConversation = this.state.conversations.find(conversation => {
       return conversation.id === this.state.selectedConversationId
     })
@@ -209,24 +206,28 @@ class App extends Component {
     const updated = new Date(selectedConversation.updatedAt).getTime()
     const created = timeDifference(now, updated)
 
+    console.log('App - render chat with agent: ', selectedConversation.agent)
+
     return (
       <span>
         <ChatHeader
           chatPartnerName={chatPartnerName}
+          agentId={selectedConversation.agent ? selectedConversation.agent.id : null}
           resetConversation={this._resetConversation}
-          created={created}
           profileImageUrl={profileImageUrl}
+          created={created}
         />
         <Chat
           conversationId={this.state.selectedConversationId}
           customerId={customerId}
           resetConversation={this._resetConversation}
+          secondsUntilRerender={this.state.secondsUntilRerender}
         />
       </span>
     )
   }
 
-  _subscribeToNewMessages = () => {
+  _subscribeToNewMessages = (componentRef) => {
     this.newMessageObserver = this.props.client.subscribe({
       query: gql`
         subscription {
@@ -244,6 +245,11 @@ class App extends Component {
                 agent {
                   id
                   slackUserName
+                  imageUrl
+                  messages(last: 1) {
+                    id
+                    createdAt
+                  }
                 }
               }
             }
@@ -253,16 +259,29 @@ class App extends Component {
     }).subscribe({
       next: this._handleNewMessage,
       error(error) {
-        console.error('Subscription callback with error: ', error)
+        console.error('App - Subscription callback with error: ', error)
+        console.debug('App - Subscribe again')
+        componentRef._subscribeToNewMessages(componentRef)
       },
     })
+
+
   }
 
   _handleNewMessage = (data) => {
+    const conversationOfNewMessage = data.Message.node.conversation
+    const newConversations = this.state.conversations.slice()
+    const indexOfConversationToUpdate = newConversations.findIndex(conversation =>
+      conversation.id === conversationOfNewMessage.id
+    )
+    newConversations[indexOfConversationToUpdate] = conversationOfNewMessage
 
     clearTimeout(this._timer)
     this.setState(
-      {secondsUntilRerender: INITIAL_SECONDS_UNTIL_RERENDER},
+      {
+        secondsUntilRerender: INITIAL_SECONDS_UNTIL_RERENDER,
+        conversations: newConversations
+      },
       () => this._rerender()
     )
 
@@ -407,7 +426,10 @@ class App extends Component {
   _rerender = () => {
     this.setState(
       { secondsUntilRerender: this.state.secondsUntilRerender * 2 },
-      () => this._timer = setTimeout(this._rerender, this.state.secondsUntilRerender * 1000)
+      () => {
+        this._timer = setTimeout(this._rerender, this.state.secondsUntilRerender * 1000)
+        this.forceUpdate()
+      }
     )
   }
 }

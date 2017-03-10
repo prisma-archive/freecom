@@ -7,9 +7,11 @@ class ChatMessages extends Component {
   static propTypes = {
     messages: React.PropTypes.array.isRequired,
     setEndRef: React.PropTypes.func.isRequired,
+    secondsUntilRerender: React.PropTypes.number.isRequired,
   }
 
   render() {
+
     return (
       <div className='ChatMessages padding-v-20'>
         {this.props.messages.map((message, i) => {

@@ -1,6 +1,21 @@
 import React, { Component} from 'react'
 import './ChatHeader.css'
 import './App.css'
+import gql from 'graphql-tag'
+import { graphql } from 'react-apollo'
+import { timeDifference } from './utils'
+
+const lastMessageOfCurrentAgent = gql`
+  query lastMessageOfCurrentAgent($agentId: ID!) {
+    Agent(id: $agentId) {
+      id
+      messages(last: 1) {
+        id
+        createdAt
+      }
+    }
+  }
+`
 
 class ChatHeader extends Component {
 
@@ -8,11 +23,64 @@ class ChatHeader extends Component {
     resetConversation: React.PropTypes.func.isRequired,
     chatPartnerName: React.PropTypes.string.isRequired,
     profileImageUrl: React.PropTypes.string.isRequired,
-    created: React.PropTypes.string.isRequired,
+    created: React.PropTypes.string,
+    agentId: React.PropTypes.string,
+  }
+
+  componentDidMount() {
+
+    if (this.props.lastMessageOfCurrentAgentQuery) {
+
+      this.props.lastMessageOfCurrentAgentQuery.subscribeToMore({
+        document: gql`
+          subscription Message {
+            Message(filter: {
+              mutation_in: [CREATED]
+            }) {
+              node {
+                id
+                agent {
+                  id
+                  slackUserName
+                  imageUrl
+                  messages(last: 1) {
+                    id
+                    createdAt
+                  }
+                }
+              }
+            }
+          }
+        `,
+        updateQuery: (previousState, {subscriptionData}) => {
+
+          const newMessage = subscriptionData.data.Message.node
+          if (!newMessage.agent) {
+            return previousState
+          }
+
+          return {
+            lastMessageOfCurrentAgent: newMessage.agent
+          }
+
+        }
+      })
+    }
   }
 
   render() {
 
+    console.log('ChatHeader - render: ', this.props.agentId, this.props.lastMessageOfCurrentAgentQuery)
+
+    let headerSubtitle = ''
+    if (this.props.lastMessageOfCurrentAgentQuery && !this.props.lastMessageOfCurrentAgentQuery.loading) {
+      const createdAtTimestamp = new Date(this.props.lastMessageOfCurrentAgentQuery.Agent.messages[0].createdAt).getTime()
+      const nowTimestamp = new Date().getTime()
+      headerSubtitle = 'Last active ' + timeDifference(nowTimestamp, createdAtTimestamp)
+    }
+    else {
+      headerSubtitle = 'Created '  + this.props.created
+    }
 
     return (
       <div
@@ -29,14 +97,18 @@ class ChatHeader extends Component {
             className='avatar fadeInLeft'></img>
           <div className='fadeInLeft gutter-left conversation-title'>
             {this.props.chatPartnerName}
-            <p className='fadeInLeft text-opaque'>Created {this.props.created}</p>
+            <p className='fadeInLeft text-opaque'>{headerSubtitle}</p>
           </div>
         </div>
       </div>
     )
-
   }
 
 }
 
-export default ChatHeader
+export default graphql(lastMessageOfCurrentAgent, {
+  skip: (ownProps) => {
+    return !Boolean(ownProps.agentId)
+  },
+  name: "lastMessageOfCurrentAgentQuery"
+})(ChatHeader)
