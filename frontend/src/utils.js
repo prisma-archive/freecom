@@ -1,3 +1,4 @@
+import generateStupidName from 'sillyname'
 
 // shamelessly copied from:
 // http://stackoverflow.com/questions/6108819/javascript-timestamp-to-relative-time-eg-2-seconds-ago-one-week-ago-etc-best
@@ -40,6 +41,12 @@ export function timeDifference(current, previous) {
   }
 }
 
+export function timeDifferenceForDate(date) {
+  const now = new Date().getTime()
+  const updated = new Date(date).getTime()
+  return timeDifference(now, updated)
+}
+
 export function sortConversationByDateCreated(conversation1, conversation2) {
 
   const lastMessage1 = conversation1.messages[0]
@@ -59,4 +66,13 @@ export function sortConversationByDateCreated(conversation1, conversation2) {
   }
   return 0
 
+}
+
+export function generateShortStupidName(maxLength) {
+  const username = generateStupidName()
+  if (username.length > maxLength) {
+    return this._generateShortStupidName()
+  }
+  const usernameWithoutSpace = username.replace(' ', '-')
+  return usernameWithoutSpace
 }

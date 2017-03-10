@@ -5,10 +5,10 @@ import Chat from './Chat'
 import ChatHeader from './ChatHeader'
 import ConversationsList from './ConversationsList'
 import ConversationsListHeader from './ConversationsListHeader'
+import ToggleOpeningStateButton from './ToggleOpeningStateButton'
 import { graphql, compose, withApollo } from 'react-apollo'
 import gql from 'graphql-tag'
-import generateStupidName from 'sillyname'
-import { timeDifference, sortConversationByDateCreated } from './utils'
+import { timeDifferenceForDate, sortConversationByDateCreated, generateShortStupidName } from './utils'
 
 const TEST_WITH_NEW_CUSTOMER = false
 const FREECOM_CUSTOMER_ID_KEY = 'FREECOM_CUSTOMER_ID'
@@ -69,6 +69,35 @@ const createConversation = gql`
   }
 `
 
+const newMessageSusbcription = gql`
+  subscription {
+    Message(filter: {
+    mutation_in: [CREATED]
+    }) {
+      node {
+        id
+        text
+        createdAt
+        conversation {
+          id
+          updatedAt
+          slackChannelName
+          slackChannelIndex
+          agent {
+            id
+            slackUserName
+            imageUrl
+            messages(last: 1) {
+              id
+              createdAt
+            }
+          }
+        }
+      }
+    }
+  }
+`
+
 const INITIAL_SECONDS_UNTIL_RERENDER = 8
 
 class App extends Component {
@@ -79,7 +108,6 @@ class App extends Component {
     isOpen: true,
     selectedConversationId: null,
     conversations: [],
-    displayState: 'CONVERSATIONS', // 'CONVERSATIONS' or 'CHAT'
     secondsUntilRerender: INITIAL_SECONDS_UNTIL_RERENDER,
   }
 
@@ -98,8 +126,7 @@ class App extends Component {
     if (Boolean(customerId) && Boolean(username)) {
       // customer already exists, find all conversations for that customer
       this._loadConversations(customerId)
-    }
-    else {
+    } else {
       // customer doesn't exist yet, create customer and conversation
       this._setupNewCustomer()
     }
@@ -116,42 +143,27 @@ class App extends Component {
   }
 
   render() {
-
     const customerId = localStorage.getItem(FREECOM_CUSTOMER_ID_KEY)
-    const customerExists = Boolean(customerId)
-    const conversationExists = Boolean(this.state.selectedConversationId)
-    const panelStyles = cx('panel drop-shadow radius overflow-hidden', {
-      'hide': !this.state.isOpen,
-      'fadeInUp':this.state.isOpen,
-    })
-    const buttonStyles = cx('button drop-shadow-hover pointer flex-center flex', {
-      'drop-shadow-hover-active': this.state.isOpen
-    })
-
+    const selectedConversation = Boolean(this.state.selectedConversationId)
+    const panelStyles = cx(`panel drop-shadow radius overflow-hidden ${this.state.isOpen ? 'fadeInUp' : 'hide'}`)
     return (
       <div className='App'>
         <div>
           <div className='container'>
             <div className={panelStyles}>
-              {!conversationExists
-                  ? Boolean(this.state.conversations) && this._conversationsList()
-                  : customerExists && this._chat(customerId)
-              }
+              {selectedConversation && customerId ? this._renderChat(customerId) : this._renderConversationsList()}
             </div>
-            <div
-              style={{backgroundColor: global['Freecom'].mainColor}}
-              className={buttonStyles}
-              onClick={() => this._togglePanel()}
-            >
-              <i className='material-icons'>{this.state.isOpen ? 'close' : 'chat_bubble'}</i>
-            </div>
+            <ToggleOpeningStateButton
+              isOpen={this.state.isOpen}
+              togglePanel={this._togglePanel}
+            />
           </div>
         </div>
       </div>
     )
   }
 
-  _conversationsList = () => {
+  _renderConversationsList = () => {
     return (
       <span>
         <ConversationsListHeader />
@@ -173,19 +185,12 @@ class App extends Component {
     )
   }
 
-  _chat = (customerId) => {
-    const selectedConversation = this.state.conversations.find(conversation => {
-      return conversation.id === this.state.selectedConversationId
-    })
-
-    const agent = selectedConversation.agent
-    const chatPartnerName = agent ?
-      selectedConversation.agent.slackUserName : global['Freecom'].companyName
+  _renderChat = (customerId) => {
+    const selectedConversation = this.state.conversations.find(c => c.id === this.state.selectedConversationId)
+    const { agent } = selectedConversation
+    const chatPartnerName = agent ? selectedConversation.agent.slackUserName : global['Freecom'].companyName
     const profileImageUrl = agent && agent.imageUrl ? agent.imageUrl : global['Freecom'].companyLogoURL
-
-    const now = new Date().getTime()
-    const updated = new Date(selectedConversation.updatedAt).getTime()
-    const created = timeDifference(now, updated)
+    const created = timeDifferenceForDate(selectedConversation.updatedAt)
     return (
       <span>
         <ChatHeader
@@ -207,44 +212,14 @@ class App extends Component {
 
   _subscribeToNewMessages = (componentRef) => {
     this.newMessageObserver = this.props.client.subscribe({
-      query: gql`
-        subscription {
-          Message(filter: {
-            mutation_in: [CREATED]
-          }) {
-            node {
-              id
-              text
-              createdAt
-              conversation {
-                id
-                updatedAt
-                slackChannelName
-                slackChannelIndex
-                agent {
-                  id
-                  slackUserName
-                  imageUrl
-                  messages(last: 1) {
-                    id
-                    createdAt
-                  }
-                }
-              }
-            }
-          }
-        }
-      `,
+      query: newMessageSusbcription,
     }).subscribe({
       next: this._handleNewMessage,
       error(error) {
-        console.error('App - Subscription callback with error: ', error)
-        console.debug('App - Subscribe again')
+        console.error('App - Subscription callback with error: ', error, 'Subscribe again')
         componentRef._subscribeToNewMessages(componentRef)
       },
     })
-
-
   }
 
   _handleNewMessage = (data) => {
@@ -256,19 +231,17 @@ class App extends Component {
     newConversations[indexOfConversationToUpdate] = conversationOfNewMessage
 
     clearTimeout(this._timer)
-    this.setState(
-      {
-        secondsUntilRerender: INITIAL_SECONDS_UNTIL_RERENDER,
-        conversations: newConversations
-      },
+    this.setState({
+      secondsUntilRerender: INITIAL_SECONDS_UNTIL_RERENDER,
+      conversations: newConversations
+    },
       () => this._rerender()
     )
-
     this._updateLastMessageInConversation(data.Message.node.conversation.id, data.Message.node)
   }
 
   _setupNewCustomer = async () => {
-    const username = this._generateShortStupidName()
+    const username = this._generateShortStupidName(17)
     const result = await this.props.createCustomerMutation({
       variables: {
         name: username,
@@ -286,10 +259,8 @@ class App extends Component {
         customerId
       }
     })
-
     const sortedConversations = findConversationsResult.data.allConversations.slice()
     sortedConversations.sort(sortConversationByDateCreated)
-
     this.setState({conversations: sortedConversations})
   }
 
@@ -310,15 +281,10 @@ class App extends Component {
     this.setState({conversations: newConversations})
   }
 
-  _togglePanel = () => this.setState({isOpen: !this.state.isOpen})
-
   _initiateNewConversation = () => {
-
     const customerId = localStorage.getItem(FREECOM_CUSTOMER_ID_KEY)
     const username = localStorage.getItem(FREECOM_CUSTOMER_NAME_KEY)
-
     const emptyConversation = this.state.conversations.find(c => c.messages.length === 0)
-
     if (Boolean(emptyConversation)) {
       this.setState({selectedConversationId: emptyConversation.id})
     } else {
@@ -363,25 +329,17 @@ class App extends Component {
     })
   }
 
-  _generateShortStupidName = () => {
-    const maxLength = 17
-    const username = generateStupidName()
-    if (username.length > maxLength) {
-      return this._generateShortStupidName()
-    }
-    const usernameWithoutSpace = username.replace(' ', '-')
-    return usernameWithoutSpace
-  }
-
   _rerender = () => {
     this.setState(
       { secondsUntilRerender: this.state.secondsUntilRerender * 2 },
       () => {
         this._timer = setTimeout(this._rerender, this.state.secondsUntilRerender * 1000)
-        this.forceUpdate()
       }
     )
   }
+
+  _togglePanel = () => this.setState({isOpen: !this.state.isOpen})
+
 }
 
 const appWithMutations = compose(
