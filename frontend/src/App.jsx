@@ -143,29 +143,23 @@ class App extends Component {
 
     return (
       <div className='App'>
-        {
-          <div>
-            <div className='container'>
-              <div className={panelStyles}>
-
-                {!conversationExists ?
-                Boolean(this.state.conversations) &&
-                this._conversationsList()
-                :
-                customerExists &&
-                this._chat(customerId)}
-
-              </div>
-              <div
-                style={{backgroundColor: global['Freecom'].mainColor}}
-                className={buttonStyles}
-                onClick={() => this._togglePanel()}
-              >
-                <i className='material-icons'>{this.state.isOpen ? 'close' : 'chat_bubble'}</i>
-              </div>
+        <div>
+          <div className='container'>
+            <div className={panelStyles}>
+              {!conversationExists
+                  ? Boolean(this.state.conversations) && this._conversationsList()
+                  : customerExists && this._chat(customerId)
+              }
+            </div>
+            <div
+              style={{backgroundColor: global['Freecom'].mainColor}}
+              className={buttonStyles}
+              onClick={() => this._togglePanel()}
+            >
+              <i className='material-icons'>{this.state.isOpen ? 'close' : 'chat_bubble'}</i>
             </div>
           </div>
-        }
+        </div>
       </div>
     )
   }
@@ -330,9 +324,7 @@ class App extends Component {
 
   _updateLastMessageInConversation = (conversationId, newLastMessage) => {
     const newConversations = this.state.conversations.slice()
-    const indexOfConversationToUpdate = newConversations.findIndex(conversation => {
-      return conversation.id === conversationId
-    })
+    const indexOfConversationToUpdate = newConversations.findIndex(c => c.id === conversationId)
     const newConversation = {
       ...newConversations[indexOfConversationToUpdate],
       messages: [newLastMessage]
@@ -354,14 +346,11 @@ class App extends Component {
     const customerId = localStorage.getItem(FREECOM_CUSTOMER_ID_KEY)
     const username = localStorage.getItem(FREECOM_CUSTOMER_NAME_KEY)
 
-    const emptyConversation = this.state.conversations.find(conversation => {
-      return conversation.messages.length === 0
-    })
+    const emptyConversation = this.state.conversations.find(c => c.messages.length === 0)
 
     if (Boolean(emptyConversation)) {
       this.setState({selectedConversationId: emptyConversation.id})
-    }
-    else {
+    } else {
       this._createNewConversation(customerId, username)
     }
   }
