@@ -13,7 +13,7 @@ module.exports = (params, callback) => {
     })
     .then(() => {
 
-      const text = 'New channel created: ' + slackChannelName
+      const text = 'New channel created: %23' + slackChannelName
       const username = 'Freecom Bot'
       const slackURL = `https://slack.com/api/chat.postMessage?token=${token}&username=${username}&channel=general&text=${text}`
 
