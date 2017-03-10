@@ -1,6 +1,5 @@
 import React, { Component } from 'react'
 import './Chat.css'
-import './App.css'
 import ChatInput from './ChatInput'
 import ChatMessages from './ChatMessages'
 import { graphql, compose } from 'react-apollo'
@@ -118,12 +117,12 @@ class Chat extends Component {
         multiple={false}
         disableClick={true}
       >
-        <div className='message-body overflow-y-scroll overflow-x-hidden box-shadow-inset'>
+        <div className='message-body chat-container'>
           <ChatMessages
             messages={this.props.allMessagesQuery.allMessages || []}
             secondsUntilRerender={this.props.secondsUntilRerender}
           />
-          {this.state.isUploadingImage && <div className='UploadImageIndicator'>Uploading image ...</div>}
+          {this.state.isUploadingImage && <div className='upload-image-indicator'>Uploading image ...</div>}
           <ChatInput
             message={this.state.message}
             onTextInput={message => this.setState({message})}

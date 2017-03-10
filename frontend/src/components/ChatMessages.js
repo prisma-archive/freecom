@@ -20,7 +20,7 @@ class ChatMessages extends Component {
 
   render() {
     return (
-      <div className='ChatMessages padding-v-20'>
+      <div className='chat-messages-container'>
         {this.props.messages.map((message, i) => {
           return (<ChatMessage
             key={i}
