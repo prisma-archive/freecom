@@ -9,10 +9,8 @@ import ToggleOpeningStateButton from './ToggleOpeningStateButton'
 import { graphql, compose, withApollo } from 'react-apollo'
 import gql from 'graphql-tag'
 import { timeDifferenceForDate, sortConversationByDateCreated, generateShortStupidName } from '../utils'
-
-const TEST_WITH_NEW_CUSTOMER = false
-const FREECOM_CUSTOMER_ID_KEY = 'FREECOM_CUSTOMER_ID'
-const FREECOM_CUSTOMER_NAME_KEY = 'FREECOM_CUSTOMER_NAME'
+import {TEST_WITH_NEW_CUSTOMER, FREECOM_CUSTOMER_ID_KEY, FREECOM_CUSTOMER_NAME_KEY,
+  MAX_USERNAME_LENGTH, INITIAL_SECONDS_UNTIL_RERENDER} from '../constants'
 
 const createCustomer = gql`
   mutation createCustomer($name: String!) {
@@ -92,13 +90,16 @@ const newMessageSusbcription = gql`
               createdAt
             }
           }
+          messages(last: 1) {
+            id
+            text
+            createdAt
+          }
         }
       }
     }
   }
 `
-
-const INITIAL_SECONDS_UNTIL_RERENDER = 8
 
 class App extends Component {
 
@@ -119,7 +120,6 @@ class App extends Component {
       localStorage.removeItem(FREECOM_CUSTOMER_NAME_KEY)
     }
 
-    // retrieve customer data
     const customerId = localStorage.getItem(FREECOM_CUSTOMER_ID_KEY)
     const username = localStorage.getItem(FREECOM_CUSTOMER_NAME_KEY)
 
@@ -127,11 +127,10 @@ class App extends Component {
       // customer already exists, find all conversations for that customer
       this._loadConversations(customerId)
     } else {
-      // customer doesn't exist yet, create customer and conversation
+      // customer doesn't exist yet, create new
       this._setupNewCustomer()
     }
 
-    // subscribe to new messages
     this._subscribeToNewMessages(this)
 
     // start periodic rerender
@@ -225,23 +224,22 @@ class App extends Component {
   _handleNewMessage = (data) => {
     const conversationOfNewMessage = data.Message.node.conversation
     const newConversations = this.state.conversations.slice()
-    const indexOfConversationToUpdate = newConversations.findIndex(conversation =>
-      conversation.id === conversationOfNewMessage.id
-    )
+    const indexOfConversationToUpdate = newConversations.findIndex(c => c.id === conversationOfNewMessage.id)
     newConversations[indexOfConversationToUpdate] = conversationOfNewMessage
+    newConversations.sort(sortConversationByDateCreated)
 
+    // reset timer for periodic rerender
     clearTimeout(this._timer)
     this.setState({
+      conversations: newConversations,
       secondsUntilRerender: INITIAL_SECONDS_UNTIL_RERENDER,
-      conversations: newConversations
     },
       () => this._rerender()
     )
-    this._updateLastMessageInConversation(data.Message.node.conversation.id, data.Message.node)
   }
 
   _setupNewCustomer = async () => {
-    const username = generateShortStupidName(17)
+    const username = generateShortStupidName(MAX_USERNAME_LENGTH)
     const result = await this.props.createCustomerMutation({
       variables: {
         name: username,
@@ -264,23 +262,6 @@ class App extends Component {
     this.setState({conversations: sortedConversations})
   }
 
-  _updateLastMessageInConversation = (conversationId, newLastMessage) => {
-    const newConversations = this.state.conversations.slice()
-    const indexOfConversationToUpdate = newConversations.findIndex(c => c.id === conversationId)
-    const newConversation = {
-      ...newConversations[indexOfConversationToUpdate],
-      messages: [newLastMessage]
-    }
-
-    // remove conversation
-    newConversations.splice(indexOfConversationToUpdate, 1)
-
-    // and insert it in first position
-    newConversations.splice(0, 0, newConversation)
-
-    this.setState({conversations: newConversations})
-  }
-
   _initiateNewConversation = () => {
     const customerId = localStorage.getItem(FREECOM_CUSTOMER_ID_KEY)
     const username = localStorage.getItem(FREECOM_CUSTOMER_NAME_KEY)
@@ -293,8 +274,6 @@ class App extends Component {
   }
 
   _createNewConversation = async (customerId, username) => {
-
-    // find channel with greatest position appended as suffix
     const channelPositions = this.state.conversations.map(c => c.slackChannelIndex)
     const newChannelPosition = channelPositions.length === 0 ? 1 : Math.max.apply(null, channelPositions) + 1
     const newChannelName = (username + '-' + newChannelPosition).toLowerCase()
@@ -317,7 +296,6 @@ class App extends Component {
   }
 
   _onSelectConversation = (conversation) => {
-    console.debug('Selected conversation: ', conversation, conversation.id)
     this.setState({
       selectedConversationId: conversation.id,
     })
@@ -339,7 +317,6 @@ class App extends Component {
   }
 
   _togglePanel = () => this.setState({isOpen: !this.state.isOpen})
-
 }
 
 const appWithMutations = compose(

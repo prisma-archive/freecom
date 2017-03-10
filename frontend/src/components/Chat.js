@@ -45,7 +45,32 @@ const allMessages = gql`
   }
 `
 
-// const INITIAL_SECONDS_UNTIL_RERENDER = 2
+const newMessageSubscription =  gql`
+  subscription newMessageSubscription($conversationId: ID!) {
+    Message(filter: {
+      AND: [{
+        mutation_in: [CREATED]
+      }, {
+        node: {
+          conversation: {
+            id: $conversationId
+          }
+        }
+      }]
+    }) {
+      node {
+        id
+        text
+        createdAt
+        agent {
+          id
+          slackUserName
+          imageUrl
+        }
+      }
+    }
+  }
+`
 
 class Chat extends Component {
 
@@ -53,7 +78,6 @@ class Chat extends Component {
     conversationId: React.PropTypes.string.isRequired,
     allMessagesQuery: React.PropTypes.any.isRequired,
     secondsUntilRerender: React.PropTypes.number.isRequired,
-    // updateLastMessage: React.PropTypes.func.isRequired,
   }
 
   _timer = null
@@ -61,7 +85,6 @@ class Chat extends Component {
   state = {
     message: '',
     isUploadingImage: false,
-    // secondsUntilRerender: INITIAL_SECONDS_UNTIL_RERENDER,
   }
 
   componentDidMount() {
@@ -69,17 +92,12 @@ class Chat extends Component {
     this._rerender()
   }
 
-  componentDidUpdate(prevProps) {
-    if (prevProps.allMessagesQuery.allMessages !== this.props.allMessagesQuery.allMessages && this.endRef) {
-      this.endRef.scrollIntoView()
-    }
-  }
-
   componentWillUnmount() {
     clearTimeout(this._timer)
   }
 
   render() {
+
     if (this.props.allMessagesQuery.loading) {
       return (
         <div
@@ -94,7 +112,7 @@ class Chat extends Component {
 
     return (
       <Dropzone
-        className='Dropzone relative'
+        className='dropzone relative'
         onDrop={this._onFileDrop}
         accept='image/*'
         multiple={false}
@@ -103,12 +121,9 @@ class Chat extends Component {
         <div className='message-body overflow-y-scroll overflow-x-hidden box-shadow-inset'>
           <ChatMessages
             messages={this.props.allMessagesQuery.allMessages || []}
-            setEndRef={this._setEndRef}
             secondsUntilRerender={this.props.secondsUntilRerender}
           />
-          {this.state.isUploadingImage &&
-          <div className='UploadImageIndicator'>Uploading image ...</div>
-          }
+          {this.state.isUploadingImage && <div className='UploadImageIndicator'>Uploading image ...</div>}
           <ChatInput
             message={this.state.message}
             onTextInput={message => this.setState({message})}
@@ -123,44 +138,19 @@ class Chat extends Component {
 
   _subscribeToNewMessages = (componentRef) => {
     this.newMessageSubscription = this.props.allMessagesQuery.subscribeToMore({
-      document: gql`
-        subscription {
-          Message(filter: {
-            AND: [{
-              mutation_in: [CREATED]
-            }, {
-              node: {
-                conversation: {
-                  id: "${this.props.conversationId}"
-                }
-              }
-            }]
-          }) {
-            node {
-              id
-              text
-              createdAt
-              agent {
-                id
-                slackUserName
-                imageUrl
-              }
-            }
-          }
-        }
-      `,
+      document: newMessageSubscription,
       updateQuery: (previousState, {subscriptionData}) => {
-
-        console.debug('Chat - Message received: ', previousState, subscriptionData)
         const newMessage = subscriptionData.data.Message.node
         const messages = previousState.allMessages ? previousState.allMessages.concat([newMessage]) : [newMessage]
         return {
           allMessages: messages,
         }
       },
+      variables: {
+        conversationId: this.props.conversationId
+      },
       onError: (err) => {
-        console.error('Chat - An error occured while being subscribed: ', err)
-        console.debug('Chat - Subscribe again')
+        console.error('Chat - An error occured while being subscribed: ', err, 'Subscribe again')
         componentRef._subscribeToNewMessages(componentRef)
       }
     })
@@ -183,9 +173,6 @@ class Chat extends Component {
   }
 
   _onFileDrop = async (acceptedFiles, rejectedFiles) => {
-    console.debug('Accepted files: ', acceptedFiles)
-    console.debug('Rejected files: ', rejectedFiles)
-
     // prepare form data, use data key!
     const data = new FormData()
     data.append('data', acceptedFiles[0])
@@ -208,11 +195,7 @@ class Chat extends Component {
     })
   }
 
-  _setEndRef = (element) => {
-    this.endRef = element
-  }
 }
-
 
 export default compose(
   graphql(allMessages, {name: 'allMessagesQuery'}),

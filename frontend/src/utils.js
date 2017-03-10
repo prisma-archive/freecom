@@ -71,7 +71,7 @@ export function sortConversationByDateCreated(conversation1, conversation2) {
 export function generateShortStupidName(maxLength) {
   const username = generateStupidName()
   if (username.length > maxLength) {
-    return this._generateShortStupidName()
+    return generateShortStupidName(maxLength)
   }
   const usernameWithoutSpace = username.replace(' ', '-')
   return usernameWithoutSpace

@@ -1,4 +1,5 @@
-import React, { Component} from 'react'
+import React, {Component} from 'react'
+import ReactDOM from 'react-dom'
 import './ChatMessages.css'
 import ChatMessage from './ChatMessage'
 
@@ -6,8 +7,15 @@ class ChatMessages extends Component {
 
   static propTypes = {
     messages: React.PropTypes.array.isRequired,
-    setEndRef: React.PropTypes.func.isRequired,
     secondsUntilRerender: React.PropTypes.number.isRequired,
+  }
+
+  componentDidMount() {
+    this._scrollToBottom()
+  }
+
+  componentDidUpdate() {
+    this._scrollToBottom()
   }
 
   render() {
@@ -20,11 +28,16 @@ class ChatMessages extends Component {
             message={message}
           />)
         })}
-        <div style={ {float:"left", clear: "both"} }
-             ref={el => { this.props.setEndRef(el) }}></div>
+        <div style={ {float:'left', clear: 'both'} } ref={el => { this._messagesEnd = el }}></div>
       </div>
     )
   }
+
+  _scrollToBottom = () => {
+    const node = ReactDOM.findDOMNode(this._messagesEnd)
+    node.scrollIntoView({behavior: 'smooth'})
+  }
+
 
 }
 

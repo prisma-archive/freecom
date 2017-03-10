@@ -74,8 +74,7 @@ class ChatHeader extends Component {
       const createdAtTimestamp = new Date(this.props.lastMessageOfCurrentAgentQuery.Agent.messages[0].createdAt).getTime()
       const nowTimestamp = new Date().getTime()
       headerSubtitle = 'Last active ' + timeDifference(nowTimestamp, createdAtTimestamp)
-    }
-    else {
+    } else {
       headerSubtitle = 'Created '  + this.props.created
     }
 
