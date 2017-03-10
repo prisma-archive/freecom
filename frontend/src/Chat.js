@@ -187,7 +187,7 @@ class Chat extends Component {
     console.debug('Rejected files: ', rejectedFiles)
 
     // prepare form data, use data key!
-    let data = new FormData()
+    const data = new FormData()
     data.append('data', acceptedFiles[0])
 
     this.setState({isUploadingImage: true})

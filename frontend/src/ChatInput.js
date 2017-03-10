@@ -1,6 +1,7 @@
 import React, { Component} from 'react'
 import './ChatInput.css'
 import Dropzone from 'react-dropzone'
+import Textarea from 'react-textarea-autosize'
 
 class ChatInput extends Component {
 
@@ -20,19 +21,15 @@ class ChatInput extends Component {
     return (
       <div className={`chat-input flex items-center radius-bottom
             ${this.state.inputHasFocus ? 'chat-input-shadow' : 'light-background'}`}>
-        <input
-          className={`InputField input ${!this.state.inputHasFocus && 'light-background'}`}
-          type='text'
+        <Textarea
+					minRows={1}
+					maxRows={5}
+          className={`InputField ${!this.state.inputHasFocus && 'light-background'}`}
           placeholder='Write a reply ...'
           value={this.props.message}
           autoFocus={true}
           onChange={(e) => this.props.onTextInput(e.target.value)}
-          onKeyDown={(e) => {
-            if (e.keyCode === 13) { // ENTER
-              this.props.onSend()
-              this.props.onResetText()
-            }
-          }}
+          onKeyDown={this._onKeyDown}
           onFocus={() => {
             this.setState({inputHasFocus: true})
           }}
@@ -58,6 +55,18 @@ class ChatInput extends Component {
         </Dropzone>
       </div>
     )
+  }
+
+  _onKeyDown = (e) => {
+    if (e.keyCode === 13) { // ENTER
+      if (e.shiftKey) { // allow new lines with ENTER + SHIFT
+        return
+      }
+
+      this.props.onSend()
+      this.props.onResetText()
+      e.preventDefault()
+    }
   }
 }
 

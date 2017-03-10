@@ -17,6 +17,13 @@ class ChatMessage extends Component {
     const agent = this.props.message.agent
     const profileImageUrl = agent && agent.imageUrl ? agent.imageUrl : global['Freecom'].companyLogoURL
 
+    const textWithLinebreaks = this.props.message.text.split('\n').map((line, index) => (
+      <span key={index}>
+        {line}
+        <br />
+      </span>
+    ))
+
     return (
     <div className='fadeInLeft'>
 
@@ -41,7 +48,7 @@ class ChatMessage extends Component {
             <div
               style={{backgroundColor: global['Freecom'].mainColor}}
               className='white padding-20 radius background-blue'>
-              <p>{this.props.message.text}</p>
+              <p>{textWithLinebreaks}</p>
             </div>
             <p className='right opacity-4 padding-top-2'>{ago}</p>
           </div>
