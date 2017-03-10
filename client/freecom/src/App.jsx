@@ -82,7 +82,7 @@ const createConversation = gql`
   }
 `
 
-const INITIAL_SECONDS_UNTIL_RERENDER = 4
+const INITIAL_SECONDS_UNTIL_RERENDER = 8
 
 class App extends Component {
 
@@ -205,9 +205,6 @@ class App extends Component {
     const now = new Date().getTime()
     const updated = new Date(selectedConversation.updatedAt).getTime()
     const created = timeDifference(now, updated)
-
-    console.log('App - render chat with agent: ', selectedConversation.agent)
-
     return (
       <span>
         <ChatHeader

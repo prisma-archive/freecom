@@ -11,8 +11,12 @@ export function timeDifference(current, previous) {
 
   var elapsed = current - previous;
 
+  if (elapsed < msPerMinute / 3) {
+    return 'just now'
+  }
+
   if (elapsed < msPerMinute) {
-    return Math.round(elapsed/1000) + ' sec ago';
+    return 'less than 1 min ago'
   }
 
   else if (elapsed < msPerHour) {

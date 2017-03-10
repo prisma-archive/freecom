@@ -69,9 +69,6 @@ class ChatHeader extends Component {
   }
 
   render() {
-
-    console.log('ChatHeader - render: ', this.props.agentId, this.props.lastMessageOfCurrentAgentQuery)
-
     let headerSubtitle = ''
     if (this.props.lastMessageOfCurrentAgentQuery && !this.props.lastMessageOfCurrentAgentQuery.loading) {
       const createdAtTimestamp = new Date(this.props.lastMessageOfCurrentAgentQuery.Agent.messages[0].createdAt).getTime()
