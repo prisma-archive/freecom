@@ -11,9 +11,11 @@ module.exports = (params, callback) => {
     {
       method: 'GET',
     })
-    .then(() => {
+    .then((response) => {
+      return response.json()
+    }).then((json) => {
 
-      const text = 'New channel created: %23' + slackChannelName
+      const text =  'New channel created: <%23' + json.channel.id + '|' + slackChannelName + '>' // <%23ID|slackChannelName>
       const username = 'Freecom Bot'
       const slackURL = `https://slack.com/api/chat.postMessage?token=${token}&username=${username}&channel=general&text=${text}`
 
