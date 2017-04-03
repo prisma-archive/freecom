@@ -27,6 +27,12 @@ const client = new ApolloClient({
   dataIdFromObject: o => o.id,
 })
 
+const freecom = {
+  render,
+  companyName: 'Graphcool',
+  companyLogoURL: 'http://imgur.com/qPjLkW0.png',
+  mainColor: 'rgba(39,175,96,1)'
+}
 
 function render(element) {
 
@@ -44,13 +50,6 @@ function render(element) {
     ,
     element
   )
-}
-
-const freecom = {
-  render,
-  companyName: 'Graphcool',
-  companyLogoURL: 'http://imgur.com/qPjLkW0.png',
-  mainColor: 'rgba(39,175,96,1)'
 }
 
 render(document.getElementById('__freecom-root__'))

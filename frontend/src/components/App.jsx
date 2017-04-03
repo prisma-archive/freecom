@@ -173,6 +173,7 @@ class App extends Component {
             <ToggleOpeningStateButton
               isOpen={this.state.isOpen}
               togglePanel={this._togglePanel}
+              mainColor={this.props.freecom.mainColor}
             />
           </div>
         </div>
@@ -183,11 +184,16 @@ class App extends Component {
   _renderConversationsList = () => {
     return (
       <span>
-        <ConversationsListHeader />
+        <ConversationsListHeader
+          mainColor={this.props.freecom.mainColor}
+          companyName={this.props.freecom.companyName}
+        />
         <div className='body overflow-y-scroll overflow-x-hidden'>
           <ConversationsList
             conversations={this.state.conversations}
             onSelectConversation={this._onSelectConversation}
+            companyLogoURL={this.props.freecom.companyLogoURL}
+            companyName={this.props.freecom.companyName}
           />
           <div className='flex flex-hcenter full-width conversation-button-wrapper pointer-events-none'>
             <div

@@ -7,6 +7,8 @@ class ConversationItem extends Component {
   static propTypes = {
     conversation: React.PropTypes.any.isRequired,
     onSelectConversation: React.PropTypes.func.isRequired,
+    companyName: React.PropTypes.string.isRequired,
+    companyLogoURL: React.PropTypes.string.isRequired,
   }
 
   render() {
@@ -48,11 +50,11 @@ class ConversationItem extends Component {
 
     const chatPartnerName = this.props.conversation.agent ?
       this.props.conversation.agent.slackUserName :
-      global['Freecom'].companyName
+      this.props.companyName
 
     const profileImageUrl =  this.props.conversation.agent && this.props.conversation.agent.imageUrl ?
       this.props.conversation.agent.imageUrl :
-      global['Freecom'].companyLogoURL
+      this.props.companyLogoURL
 
     return {ago, messageText, chatPartnerName, profileImageUrl}
   }

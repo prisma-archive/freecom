@@ -6,6 +6,8 @@ class ConversationsList extends Component {
 
   static propTypes = {
     onSelectConversation: React.PropTypes.func.isRequired,
+    companyName: React.PropTypes.string.isRequired,
+    companyLogoURL: React.PropTypes.string.isRequired,
   }
 
   render() {
@@ -16,6 +18,8 @@ class ConversationsList extends Component {
             key={i}
             conversation={conversation}
             onSelectConversation={this.props.onSelectConversation}
+            companyName={this.props.companyName}
+            companyLogoURL={this.props.companyLogoURL}
           />)
         })}
       </div>

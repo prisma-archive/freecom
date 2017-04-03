@@ -7,6 +7,7 @@ class ToggleOpeningStateButton extends Component {
   static propTypes = {
     isOpen: React.PropTypes.bool.isRequired,
     togglePanel: React.PropTypes.func.isRequired,
+    mainColor: React.PropTypes.string.isRequired,
   }
 
   render() {
@@ -17,7 +18,7 @@ class ToggleOpeningStateButton extends Component {
 
     return (
       <div
-        style={{backgroundColor: global['Freecom'].mainColor}}
+        style={{backgroundColor: this.props.mainColor}}
         className={buttonStyles}
         onClick={() => this.props.togglePanel()}
       >
