@@ -8,6 +8,8 @@ class ChatMessages extends Component {
   static propTypes = {
     messages: React.PropTypes.array.isRequired,
     secondsUntilRerender: React.PropTypes.number.isRequired,
+    profileImageURL: React.PropTypes.string.isRequired,
+    userSpeechBubbleColor: React.PropTypes.string.isRequired,
   }
 
   componentDidMount() {
@@ -27,6 +29,8 @@ class ChatMessages extends Component {
             key={i}
             message={message}
             shouldRenderTimestamp={isLatestMessage}
+            profileImageURL={this.props.profileImageURL}
+            userSpeechBubbleColor={this.props.userSpeechBubbleColor}
           />)
         })}
         { /* invisible element required for automatic scrolling to bottom */ }

@@ -44,6 +44,7 @@ class ChatHeader extends Component {
     resetConversation: React.PropTypes.func.isRequired,
     chatPartnerName: React.PropTypes.string.isRequired,
     profileImageUrl: React.PropTypes.string.isRequired,
+    headerColor: React.PropTypes.string.isRequired,
     created: React.PropTypes.string,
     agentId: React.PropTypes.string,
     shouldDisplayBackButton: React.PropTypes.bool,
@@ -70,7 +71,7 @@ class ChatHeader extends Component {
     const headerSubtitle = this._generateHeaderSubtitle()
     return (
       <div
-        style={{backgroundColor: global['Freecom'].mainColor}}
+        style={{backgroundColor: this.props.headerColor}}
         className='header flex header-padding-chat items-center header-shadow'
       >
         {this.props.shouldDisplayBackButton &&

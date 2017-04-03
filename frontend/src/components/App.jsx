@@ -141,7 +141,7 @@ class App extends Component {
     const customerId = localStorage.getItem(FREECOM_CUSTOMER_ID_KEY)
     const username = localStorage.getItem(FREECOM_CUSTOMER_NAME_KEY)
 
-    if (Boolean(customerId) && Boolean(username)) {
+    if (customerId && username) {
       // customer already exists, find all conversations for that customer
       this._loadConversations(customerId)
     } else {
@@ -161,14 +161,14 @@ class App extends Component {
 
   render() {
     const customerId = localStorage.getItem(FREECOM_CUSTOMER_ID_KEY)
-    const selectedConversation = Boolean(this.state.selectedConversationId)
+    const shouldRenderChat = this.state.selectedConversationId && customerId
     const panelStyles = cx(`panel drop-shadow radius overflow-hidden ${this.state.isOpen ? 'fadeInUp' : 'hide'}`)
     return (
       <div className='App'>
         <div>
           <div className='container'>
             <div className={panelStyles}>
-              {(selectedConversation && customerId) ? this._renderChat(customerId) : this._renderConversationsList()}
+              {shouldRenderChat ? this._renderChat(customerId) : this._renderConversationsList()}
             </div>
             <ToggleOpeningStateButton
               isOpen={this.state.isOpen}
@@ -203,16 +203,18 @@ class App extends Component {
   }
 
   _renderChat = (customerId) => {
+    const {freecom} = this.props
     const selectedConversation = this.state.conversations.find(c => c.id === this.state.selectedConversationId)
     const { agent } = selectedConversation
-    const chatPartnerName = agent ? selectedConversation.agent.slackUserName : global['Freecom'].companyName
-    const profileImageUrl = agent && agent.imageUrl ? agent.imageUrl : global['Freecom'].companyLogoURL
+    const chatPartnerName = agent ? selectedConversation.agent.slackUserName : freecom.companyName
+    const profileImageUrl = agent && agent.imageUrl ? agent.imageUrl : freecom.companyLogoURL
     const created = timeDifferenceForDate(selectedConversation.updatedAt)
     return (
       <span>
         <ChatHeader
           chatPartnerName={chatPartnerName}
           agentId={selectedConversation.agent ? selectedConversation.agent.id : null}
+          headerColor={freecom.mainColor}
           resetConversation={this._resetConversation}
           profileImageUrl={profileImageUrl}
           created={created}
@@ -220,9 +222,11 @@ class App extends Component {
         />
         <Chat
           conversationId={this.state.selectedConversationId}
+          mainColor={freecom.mainColor}
           customerId={customerId}
           resetConversation={this._resetConversation}
           secondsUntilRerender={this.state.secondsUntilRerender}
+          profileImageURL={freecom.companyLogoURL}
         />
       </span>
     )
@@ -298,7 +302,7 @@ class App extends Component {
     const customerId = localStorage.getItem(FREECOM_CUSTOMER_ID_KEY)
     const username = localStorage.getItem(FREECOM_CUSTOMER_NAME_KEY)
     const emptyConversation = this.state.conversations.find(c => c.messages.length === 0)
-    if (Boolean(emptyConversation)) {
+    if (emptyConversation) {
       this.setState({selectedConversationId: emptyConversation.id})
     } else {
       this._createNewConversation(customerId, username)

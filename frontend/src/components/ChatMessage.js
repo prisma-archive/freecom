@@ -6,7 +6,9 @@ class ChatMessage extends Component {
 
   static propTypes = {
     message: React.PropTypes.any.isRequired,
-    shouldRenderTimestamp: React.PropTypes.bool
+    shouldRenderTimestamp: React.PropTypes.bool.isRequired,
+    profileImageURL: React.PropTypes.string.isRequired,
+    userSpeechBubbleColor: React.PropTypes.string.isRequired,
   }
 
   render() {
@@ -25,7 +27,7 @@ class ChatMessage extends Component {
         <div className='flex flex-bottom'>
           <div className='message-container message-container-padding-right flex-right'>
             <div
-              style={{backgroundColor: global['Freecom'].mainColor}}
+              style={{backgroundColor: this.props.userSpeechBubbleColor}}
               className='white padding-20 radius background-blue'>
               <p>{textWithLineBreaks}</p>
             </div>
@@ -63,7 +65,7 @@ class ChatMessage extends Component {
   _generateChatMessageInfo = () => {
     const ago = timeDifferenceForDate(this.props.message.createdAt)
     const agent = this.props.message.agent
-    const profileImageUrl = agent && agent.imageUrl ? agent.imageUrl : global['Freecom'].companyLogoURL
+    const profileImageUrl = agent && agent.imageUrl ? agent.imageUrl : this.props.profileImageURL
     const textWithLineBreaks = this.props.message.text.split('\n').map((line, index) => (
       <span key={index}>
         {line}

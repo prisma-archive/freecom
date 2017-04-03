@@ -77,6 +77,8 @@ class Chat extends Component {
     conversationId: React.PropTypes.string.isRequired,
     allMessagesQuery: React.PropTypes.any.isRequired,
     secondsUntilRerender: React.PropTypes.number.isRequired,
+    mainColor: React.PropTypes.string.isRequired,
+    profileImageURL: React.PropTypes.string.isRequired,
   }
 
   _timer = null
@@ -103,7 +105,7 @@ class Chat extends Component {
           className='loading-container'
         >
           <div
-            style={{backgroundColor: global['Freecom'].mainColor || 'rgba(0,0,0,.5)'}}
+            style={{backgroundColor: this.props.mainColor || 'rgba(0,0,0,.5)'}}
             className='loading' />
         </div>
       )
@@ -121,6 +123,8 @@ class Chat extends Component {
           <ChatMessages
             messages={this.props.allMessagesQuery.allMessages || []}
             secondsUntilRerender={this.props.secondsUntilRerender}
+            userSpeechBubbleColor={this.props.mainColor}
+            profileImageURL={this.props.profileImageURL}
           />
           {this.state.isUploadingImage && <div className='upload-image-indicator'>Uploading image ...</div>}
           <ChatInput

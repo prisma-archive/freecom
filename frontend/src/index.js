@@ -39,7 +39,7 @@ function render(element) {
 
   ReactDOM.render(
     <ApolloProvider client={client}>
-      <App />
+      <App freecom={freecom}/>
     </ApolloProvider>
     ,
     element
@@ -52,7 +52,5 @@ const freecom = {
   companyLogoURL: 'http://imgur.com/qPjLkW0.png',
   mainColor: 'rgba(39,175,96,1)'
 }
-
-global['Freecom'] = freecom
 
 render(document.getElementById('__freecom-root__'))
