@@ -6,11 +6,12 @@ class ChatMessage extends Component {
 
   static propTypes = {
     message: React.PropTypes.any.isRequired,
+    shouldRenderTimestamp: React.PropTypes.bool
   }
 
   render() {
-  const {agent} = this._generateChatMessageInfo()
-  return (
+    const {agent} = this._generateChatMessageInfo()
+    return (
       <div className='fadeInLeft'>
         {agent ? this._renderAgentMessage() : this._renderOwnMessage()}
       </div>
@@ -28,7 +29,9 @@ class ChatMessage extends Component {
               className='white padding-20 radius background-blue'>
               <p>{textWithLineBreaks}</p>
             </div>
-            <p className='right opacity-4 padding-top-2'>{ago}</p>
+            {this.props.shouldRenderTimestamp &&
+              <p className='right opacity-4 padding-top-2'>{ago}</p>
+            }
           </div>
         </div>
       </div>
@@ -48,7 +51,9 @@ class ChatMessage extends Component {
             <div className='opaque background-gray padding-20 radius opaque'>
               <p>{textWithLineBreaks}</p>
             </div>
-            <p className='right opacity-4 padding-top-2'>{ago}</p>
+            {this.props.shouldRenderTimestamp &&
+              <p className='right opacity-4 padding-top-2'>{ago}</p>
+            }
           </div>
         </div>
       </div>

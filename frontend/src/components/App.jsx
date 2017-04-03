@@ -150,7 +150,7 @@ class App extends Component {
         <div>
           <div className='container'>
             <div className={panelStyles}>
-              {selectedConversation && customerId ? this._renderChat(customerId) : this._renderConversationsList()}
+              {(selectedConversation && customerId) ? this._renderChat(customerId) : this._renderConversationsList()}
             </div>
             <ToggleOpeningStateButton
               isOpen={this.state.isOpen}
@@ -230,10 +230,11 @@ class App extends Component {
 
     // reset timer for periodic rerender
     clearTimeout(this._timer)
-    this.setState({
-      conversations: newConversations,
-      secondsUntilRerender: INITIAL_SECONDS_UNTIL_RERENDER,
-    },
+    this.setState(
+      {
+        conversations: newConversations,
+        secondsUntilRerender: INITIAL_SECONDS_UNTIL_RERENDER,
+      },
       () => this._rerender()
     )
   }

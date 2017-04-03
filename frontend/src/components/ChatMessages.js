@@ -22,9 +22,11 @@ class ChatMessages extends Component {
     return (
       <div className='chat-messages-container'>
         {this.props.messages.map((message, i) => {
+          const isLatestMessage = i === 0
           return (<ChatMessage
             key={i}
             message={message}
+            shouldRenderTimestamp={isLatestMessage}
           />)
         })}
         <div style={ {float:'left', clear: 'both'} } ref={el => { this._messagesEnd = el }}></div>
