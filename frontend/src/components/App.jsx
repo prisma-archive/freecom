@@ -115,10 +115,10 @@ class App extends Component {
   async componentDidMount() {
 
     // TESTING
-    // if (TEST_WITH_NEW_CUSTOMER) {
-    //   localStorage.removeItem(FREECOM_CUSTOMER_ID_KEY)
-    //   localStorage.removeItem(FREECOM_CUSTOMER_NAME_KEY)
-    // }
+    if (TEST_WITH_NEW_CUSTOMER) {
+      localStorage.removeItem(FREECOM_CUSTOMER_ID_KEY)
+      localStorage.removeItem(FREECOM_CUSTOMER_NAME_KEY)
+    }
 
     const customerId = localStorage.getItem(FREECOM_CUSTOMER_ID_KEY)
     const username = localStorage.getItem(FREECOM_CUSTOMER_NAME_KEY)
