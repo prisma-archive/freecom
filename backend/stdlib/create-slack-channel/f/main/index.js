@@ -7,6 +7,11 @@ module.exports = (params, callback) => {
 
   const slackChannelName = params.kwargs.createdNode.slackChannelName.toLowerCase()
 
+  // code that can be used when `slackChannelName` is removed
+  // const customerName = params.kwargs.createdNode.customer.name
+  // const numberOfExistingConversations = params.kwargs.createdNode.customer.conversations._messagesMeta.count
+  // const slackChannelName = customerName + '-' + numberOfExistingConversations + 1
+
   fetch('https://slack.com/api/channels.create?token=' + token + '&name=' + slackChannelName,
     {
       method: 'GET',

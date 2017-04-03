@@ -1,4 +1,3 @@
-/* Import dependencies, declare constants */
 require('isomorphic-fetch')
 
 const token = 'xoxp-143869968915-143869969027-147144818550-66059a896db494ecfd2afdee0f3f306b'
