@@ -13,11 +13,10 @@ import {TEST_WITH_NEW_CUSTOMER, FREECOM_CUSTOMER_ID_KEY, FREECOM_CUSTOMER_NAME_K
   MAX_USERNAME_LENGTH, INITIAL_SECONDS_UNTIL_RERENDER} from '../constants'
 
 const createCustomerAndFirstConversation = gql`
-  mutation createCustomer($name: String!, $slackChannelName: String!) {
+  mutation createCustomer($name: String!) {
     createCustomer(name: $name, conversations: [
       {
         slackChannelIndex: 1,
-        slackChannelName: $slackChannelName
       }
     ]) {
       id
@@ -25,7 +24,6 @@ const createCustomerAndFirstConversation = gql`
       conversations {
         id
         updatedAt
-        slackChannelName
         slackChannelIndex
         agent {
           id
@@ -51,7 +49,6 @@ const findConversations = gql`
     }){
       id
       updatedAt
-      slackChannelName
       slackChannelIndex
       agent {
         id
@@ -68,11 +65,12 @@ const findConversations = gql`
 `
 
 const createConversation = gql`
-  mutation createConversation($customerId: ID!, $slackChannelName: String!, $slackChannelIndex: Int!) {
-    createConversation(customerId: $customerId, slackChannelName: $slackChannelName, slackChannelIndex: $slackChannelIndex) {
+  mutation createConversation($customerId: ID!, $slackChannelIndex: Int!) {
+    createConversation(
+    customerId: $customerId, 
+    slackChannelIndex: $slackChannelIndex) {
       id
       updatedAt
-      slackChannelName
       slackChannelIndex
       agent {
         id
@@ -100,7 +98,6 @@ const newMessageSubscription = gql`
         conversation {
           id
           updatedAt
-          slackChannelName
           slackChannelIndex
           agent {
             id
@@ -266,7 +263,6 @@ class App extends Component {
     const result = await this.props.createCustomerAndFirstConversationMutation({
       variables: {
         name: username,
-        slackChannelName: username + '-1'
       }
     })
     const customerId = result.data.createCustomer.id
@@ -312,14 +308,12 @@ class App extends Component {
   _createNewConversation = async (customerId, username) => {
     const channelPositions = this.state.conversations.map(c => c.slackChannelIndex)
     const newChannelPosition = channelPositions.length === 0 ? 1 : Math.max.apply(null, channelPositions) + 1
-    const newChannelName = (username + '-' + newChannelPosition).toLowerCase()
 
     // create new conversation for the customer
-    console.debug('Create conversation for existing customer: ', customerId, newChannelName, newChannelName)
+    console.debug('Create conversation for existing customer: ', customerId)
     const result = await this.props.createConversationMutation({
       variables: {
         customerId: customerId,
-        slackChannelName: newChannelName,
         slackChannelIndex: newChannelPosition,
       }
     })

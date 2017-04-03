@@ -5,12 +5,9 @@ const token = 'xoxp-143869968915-143869969027-147144818550-66059a896db494ecfd2af
 
 module.exports = (params, callback) => {
 
-  const slackChannelName = params.kwargs.createdNode.slackChannelName.toLowerCase()
-
-  // code that can be used when `slackChannelName` is removed
-  // const customerName = params.kwargs.createdNode.customer.name
-  // const numberOfExistingConversations = params.kwargs.createdNode.customer.conversations._messagesMeta.count
-  // const slackChannelName = customerName + '-' + numberOfExistingConversations + 1
+  const customerName = params.kwargs.createdNode.customer.name.toLowerCase()
+  const numberOfExistingConversations = params.kwargs.createdNode.customer._conversationsMeta.count
+  const slackChannelName = customerName + '-' + numberOfExistingConversations
 
   fetch('https://slack.com/api/channels.create?token=' + token + '&name=' + slackChannelName,
     {
@@ -20,7 +17,7 @@ module.exports = (params, callback) => {
       return response.json()
     }).then((json) => {
 
-      const text =  'New channel created: <%23' + json.channel.id + '|' + slackChannelName + '>' // <%23ID|slackChannelName>
+      const text =  'New channel created: <%23' + json.channel.id + '|' + slackChannelName + '>'
       const username = 'Freecom Bot'
       const slackURL = `https://slack.com/api/chat.postMessage?token=${token}&username=${username}&channel=general&text=${text}`
 

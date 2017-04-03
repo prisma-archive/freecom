@@ -15,10 +15,15 @@ module.exports = (params, callback) => {
   const slackUserId = params.kwargs['user_id']
   const slackUserName = params.kwargs['user_name']
 
+  const slackChannelNameComponents = slackChannelName.split('-')
+  const customerName = slackChannelNameComponents.slice(0, slackChannelNameComponents.length-1).join('-')
+  const conversationIndex = slackChannelNameComponents[slackChannelNameComponents.length-1]
+
   client.query(`
     {
       allConversations(filter: {
-        slackChannelName: "${slackChannelName}"
+        customer: { name: "${customerName}" },
+        slackChannelIndex: ${conversationIndex}
       }) {
         id
         slackChannelName

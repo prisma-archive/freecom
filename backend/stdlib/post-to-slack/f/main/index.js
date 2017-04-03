@@ -19,7 +19,10 @@ module.exports = (params, callback) => {
   }
 
   const text = params.kwargs.createdNode.text
-  const slackChannelName = params.kwargs.createdNode.conversation.slackChannelName
+  // const slackChannelName = params.kwargs.createdNode.conversation.slackChannelName
+  const customerName = params.kwargs.createdNode.conversation.customer.name.toLowerCase()
+  const numberOfExistingConversations = params.kwargs.createdNode.conversation.customer._conversationsMeta.count
+  const slackChannelName = customerName + '-' + params.kwargs.createdNode.conversation.slackChannelIndex
 
   const slackURL = `https://slack.com/api/chat.postMessage?token=${token}&channel=${slackChannelName}&username=${username}&text=${text}&icon_emoji=${emoji}`
 
