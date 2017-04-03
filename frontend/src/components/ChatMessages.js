@@ -22,13 +22,14 @@ class ChatMessages extends Component {
     return (
       <div className='chat-messages-container'>
         {this.props.messages.map((message, i) => {
-          const isLatestMessage = i === 0
+          const isLatestMessage = i === this.props.messages.length - 1
           return (<ChatMessage
             key={i}
             message={message}
             shouldRenderTimestamp={isLatestMessage}
           />)
         })}
+        { /* invisible element required for automatic scrolling to bottom */ }
         <div style={ {float:'left', clear: 'both'} } ref={el => { this._messagesEnd = el }}></div>
       </div>
     )

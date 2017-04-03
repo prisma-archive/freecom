@@ -25,7 +25,7 @@ class ChatInput extends Component {
 					minRows={1}
 					maxRows={5}
           className={`InputField ${!this.state.inputHasFocus && 'light-background'}`}
-          placeholder='Write a reply ...'
+          placeholder='Send a message ...'
           value={this.props.message}
           autoFocus={true}
           onChange={(e) => this.props.onTextInput(e.target.value)}

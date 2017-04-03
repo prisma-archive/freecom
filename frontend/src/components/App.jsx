@@ -12,11 +12,32 @@ import { timeDifferenceForDate, sortConversationByDateCreated, generateShortStup
 import {TEST_WITH_NEW_CUSTOMER, FREECOM_CUSTOMER_ID_KEY, FREECOM_CUSTOMER_NAME_KEY,
   MAX_USERNAME_LENGTH, INITIAL_SECONDS_UNTIL_RERENDER} from '../constants'
 
-const createCustomer = gql`
-  mutation createCustomer($name: String!) {
-    createCustomer(name: $name) {
+const createCustomerAndFirstConversation = gql`
+  mutation createCustomer($name: String!, $slackChannelName: String!) {
+    createCustomer(name: $name, conversations: [
+      {
+        slackChannelIndex: 1,
+        slackChannelName: $slackChannelName
+      }
+    ]) {
       id
       name
+      conversations {
+        id
+        updatedAt
+        slackChannelName
+        slackChannelIndex
+        agent {
+          id
+          slackUserName
+          imageUrl
+        }
+        messages(last: 1) {
+          id
+          text
+          createdAt
+        }
+      }
     }
   }
 `
@@ -198,6 +219,7 @@ class App extends Component {
           resetConversation={this._resetConversation}
           profileImageUrl={profileImageUrl}
           created={created}
+          shouldDisplayBackButton={selectedConversation.messages.length > 0}
         />
         <Chat
           conversationId={this.state.selectedConversationId}
@@ -241,14 +263,20 @@ class App extends Component {
 
   _setupNewCustomer = async () => {
     const username = generateShortStupidName(MAX_USERNAME_LENGTH)
-    const result = await this.props.createCustomerMutation({
+    const result = await this.props.createCustomerAndFirstConversationMutation({
       variables: {
         name: username,
+        slackChannelName: username + '-1'
       }
     })
     const customerId = result.data.createCustomer.id
     localStorage.setItem(FREECOM_CUSTOMER_ID_KEY, customerId)
     localStorage.setItem(FREECOM_CUSTOMER_NAME_KEY, username)
+    this.setState({
+      conversations: result.data.createCustomer.conversations,
+      selectedConversationId: result.data.createCustomer.conversations[0].id
+    })
+
   }
 
   _loadConversations = async (customerId) => {
@@ -260,7 +288,14 @@ class App extends Component {
     })
     const sortedConversations = findConversationsResult.data.allConversations.slice()
     sortedConversations.sort(sortConversationByDateCreated)
-    this.setState({conversations: sortedConversations})
+
+    const shouldOpenEmptyConversation =
+      sortedConversations.length === 1 && sortedConversations[0].messages.length === 0
+
+    this.setState({
+      conversations: sortedConversations,
+      selectedConversationId: shouldOpenEmptyConversation ? sortedConversations[0].id : null
+    })
   }
 
   _initiateNewConversation = () => {
@@ -322,7 +357,7 @@ class App extends Component {
 
 const appWithMutations = compose(
   graphql(createConversation, {name : 'createConversationMutation'}),
-  graphql(createCustomer, {name: 'createCustomerMutation'}),
+  graphql(createCustomerAndFirstConversation, {name: 'createCustomerAndFirstConversationMutation'}),
 )(App)
 
 export default withApollo(appWithMutations)

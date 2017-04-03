@@ -46,10 +46,10 @@ class ChatHeader extends Component {
     profileImageUrl: React.PropTypes.string.isRequired,
     created: React.PropTypes.string,
     agentId: React.PropTypes.string,
+    shouldDisplayBackButton: React.PropTypes.bool,
   }
 
   componentDidMount() {
-
     if (this.props.lastMessageOfCurrentAgentQuery) {
       this.props.lastMessageOfCurrentAgentQuery.subscribeToMore({
         document: newMessageSubscription,
@@ -73,9 +73,11 @@ class ChatHeader extends Component {
         style={{backgroundColor: global['Freecom'].mainColor}}
         className='header flex header-padding-chat items-center header-shadow'
       >
-        <div className='radius fadeInLeft flex flex-center back-button pointer' onClick={this.props.resetConversation}>
-          <i className='material-icons'>keyboard_arrow_left</i>
-        </div>
+        {this.props.shouldDisplayBackButton &&
+          <div className='radius fadeInLeft flex flex-center back-button pointer' onClick={this.props.resetConversation}>
+            <i className='material-icons'>keyboard_arrow_left</i>
+          </div>
+        }
         <div className='padding-10 flex'>
           <img
             src={this.props.profileImageUrl}
