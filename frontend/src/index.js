@@ -10,11 +10,24 @@ import { SubscriptionClient, addGraphQLSubscriptions } from 'subscriptions-trans
 const wsClient = new SubscriptionClient(`wss://subscriptions.graph.cool/v1/cizf8g3fr1sp90139ikdjayb7`, {
   reconnect: true,
   connectionParams: {
-    // Pass any arguments you want for initialization
   }
 })
 
 const networkInterface = createNetworkInterface({ uri: 'https://api.graph.cool/simple/v1/cizf8g3fr1sp90139ikdjayb7' })
+
+// Add Authorization header
+networkInterface.use([{
+  applyMiddleware(req, next) {
+    if (!req.options.headers) {
+      req.options.headers = {}
+    }
+
+    // get the authentication token from local storage if it exists
+    const token = localStorage.getItem(AUTH_TOKEN_KEY)
+    req.options.headers.authorization = token ? `Bearer ${token}` : null
+    next()
+  }
+}])
 
 // Extend the network interface with the WebSocket
 const networkInterfaceWithSubscriptions = addGraphQLSubscriptions(

@@ -10,7 +10,7 @@ import { graphql, compose, withApollo } from 'react-apollo'
 import gql from 'graphql-tag'
 import { timeDifferenceForDate, sortConversationByDateCreated, generateShortStupidName } from '../utils'
 import {TEST_WITH_NEW_CUSTOMER, FREECOM_CUSTOMER_ID_KEY, FREECOM_CUSTOMER_NAME_KEY,
-  MAX_USERNAME_LENGTH, INITIAL_SECONDS_UNTIL_RERENDER} from '../constants'
+  MAX_USERNAME_LENGTH, INITIAL_SECONDS_UNTIL_RERENDER, AUTH_TOKEN_KEY} from '../constants'
 
 const createCustomerAndFirstConversation = gql`
   mutation createCustomer($name: String!) {
@@ -36,6 +36,14 @@ const createCustomerAndFirstConversation = gql`
           createdAt
         }
       }
+    }
+  }
+`
+
+const authenticateCustomer = gql`
+  mutation AuthenticateCustomer($name: String!) {
+    authenticateAnonymousAuthenticated(secret: $name) {
+      token
     }
   }
 `
@@ -119,12 +127,13 @@ const newMessageSubscription = gql`
   }
 `
 
+
 class App extends Component {
 
   _timer = null
 
   state = {
-    isOpen: true,
+    isOpen: false,
     selectedConversationId: null,
     conversations: [],
     secondsUntilRerender: INITIAL_SECONDS_UNTIL_RERENDER,
@@ -278,11 +287,17 @@ class App extends Component {
     const customerId = result.data.createCustomer.id
     localStorage.setItem(FREECOM_CUSTOMER_ID_KEY, customerId)
     localStorage.setItem(FREECOM_CUSTOMER_NAME_KEY, username)
+    const authenticationResult = await this.props.authenticateCustomerMutation({
+      variables: {
+        name: username
+      }
+    })
+    const authToken = authenticationResult.data.authenticateAnonymousAuthenticated.token
+    localStorage.setItem(AUTH_TOKEN_KEY, authToken)
     this.setState({
       conversations: result.data.createCustomer.conversations,
       selectedConversationId: result.data.createCustomer.conversations[0].id
     })
-
   }
 
   _loadConversations = async (customerId) => {
@@ -362,6 +377,7 @@ class App extends Component {
 const appWithMutations = compose(
   graphql(createConversation, {name : 'createConversationMutation'}),
   graphql(createCustomerAndFirstConversation, {name: 'createCustomerAndFirstConversationMutation'}),
+  graphql(authenticateCustomer, {name: 'authenticateCustomerMutation'}),
 )(App)
 
 export default withApollo(appWithMutations)
